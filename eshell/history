@@ -1,0 +1,13 @@
+ls
+mv .Xmodmap .Xmodmap.big
+xmodmap -q
+xmodmap -pke
+xmodmap .Xmodmap.big 
+mv .emacs.d/Xmodmap .Xmodmap
+xmodmap .Xmodmap
+xmodmap .Xmodmap
+xmodmap .Xmodmap
+xmodmap .Xmodmap
+xmodmap .Xmodmap
+"""":::::;
+xmodmap .Xmodmap

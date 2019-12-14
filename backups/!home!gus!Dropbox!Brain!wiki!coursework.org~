@@ -1,0 +1,2331 @@
+#+TITLE: Coursework
+
+* Fall 2019
+** 33TA
+*** Notes: TA camp notes <2019-08-26 Mon>
+- Point to self help doc if seems applicable
+- Piazza alarm? 
+- Timer for hours? 
+- Need code referral, ask bef ans 
+- 2hrs grading with TA
+- Use grading channel
+- Grade complaints shouldn’t lower grade 
+*** conditional breakpoints are very useful <2019-08-27 Tue>
+** AI
+*** Basic info
+4 late days
+1 gone for HMM
+1 gone for RL
+*** Lectures
+**** First lecture <2019-09-05 Thu>                              
+- brain is like a computer, it’s all about information not what iing on
+
+**** Search <2019-09-10 Tue>                                     
+- Formalize board
+  - start in state, there are different states 
+  - potential actions
+  - action rules a(s) -> s’
+  - goal test: did I do good?
+  - cost func
+  - (S, s, C, c, g)
+- Since abstract we can apply to many areas
+- Min cost func
+  - satisficing just gets to goal
+- Search tree good abstraction but impractical to implement in th
+- Breadth/branching factor: max choices at each leaf
+- Depth: no. edges traversed
+  - min soln depth
+  - O(b^d) leaves in tree of breadth b 
+- Expand: have we finished? What are our children?
+- Frontier: set of not expanded tree nodes
+  - It’s all about choosing frontier.next 
+  - need to save ones we didn’t visit
+- Pseudo-code
+#+begin_src python
+visited = {}
+frontier = {s0}
+goal_found = false
+while not goal_found:
+  node = frontier.next()
+  frontier.del(node)
+  if(g(node)):
+    goal_found = true
+  else:
+    visited.add(node)
+    for child in node.children:
+      if(not visited.contains(child)):
+        frontier.add(child)
+#+end_src
+- Depth first search: maybe soln is far away
+  - complete if t is finite
+- BFS: maybe shallow soln
+  - better time comp than dfs bc won’t go deeper than your nose
+  - rly bad memory, needs a whole level 
+  - will find shortest path 
+- Bidirectional search
+  - better perf
+  - only works if can reverse engineer state
+  - stop at intersection *but* need to make sure it’s intersectiost depth
+- Iterative Deepening (Depth-First) Search (IDS): DFS in iteratioor fixed depths
+  - low memory
+  - duplicates work but not that bad, esp for low and high no. of
+  - the last layer dominates prior ones
+  - preferred for large and uninformed state spaces 
+- Uniform cost search expands lowest cost so far frontier node 
+- Informed Search uses cost-to-go and cost-so-far added and uses c h for extra info
+  - h(s)=0 imp done
+- A*: minimizes g(s) + h(s)
+  - g goal real number so far 
+  - h estimate heuristic of to-go
+  - w h that undershorts A* finds optimal soln
+- Google maps uses A*
+  
+**** Game Theory <2019-09-12 Thu>                                
+- Players, states, actions, terminal states, goals
+- Sequential and simultaneous games
+- Constant sum and variable sum: does aggregate utility shift?
+  - most const => zero sum
+- Bartering: var bc diff util per person
+- Strategy: f: state -> action, probably maximize exp util
+- Strat doms if always better 
+- Assume opp won’t choose always bad strategy
+- Iterated dominance: assume rational actors
+  - won’t choose dominates strats
+- Maximin ensure best worst case scenario
+- Nash equilibrium: strat alone won’t change utility
+  - stuck at max or min
+  - only changing ur own rule won’t increase util
+  - w/out coordinated action will stay same 
+- There is always a nash
+Review: what is a strategy on the little tables
+
+**** Logic <2019-09-19 Thu>                                      
+- We can't consider the whole world, we need to throw things away
+- Reasoning is an *inference procedure*
+- Propositional logic
+  - either true or false
+  - this is a statement of state of the world, not about what we 
+- Knowledge base (KB): set of facts asserted to be true about the
+  - *proposition* a variable with a truth value of true or false
+  - *knowledge base* set of worlds that share set of sentences
+    - e.g. you might say that cold and hot can't both be T, worldh this isn't true would be outside of our knowledge base
+  - *world* a real thing "out there"
+  - *model* formalization of world: set of propositions set to aclean values
+    - $2^n$ models possible for $n$ propositions
+  - If a sentence is true in m then m *satisfies* or *is a model  sentence
+  - If you know everything, then you have just one model
+  - Relies on KB and inferences meaning something is true and semy meaningful in the world: this is quite brittle
+- Inference
+  - KB A *entails* sentence B $\leftrightarrow$ every model that s A, satisfies B
+  - e.g. if A T, then B must be T
+  - *soundness* won't fuck up
+  - *completeness* will find if there
+- Inference Rules
+  - Exploit logic to skip brute force approach with small shortcu
+  - Go from knowledge base to find a statement about your query
+  - A or B, not B, then A
+- Search
+  - We can model logical inference with search
+  - Sequences of rules that get you to your goal
+- Resolution
+  - or of a bunch of things: if contains c and not c, we can elimem
+  - it is sound and complete when combined with sound and complet alg
+  - we can rewrite anything else into this form
+- First-Order Logic
+  - A more powerful representation language
+  - World comprised of
+    - objects
+      - name that references something
+    - functions
+      - take in objects and produce object
+      - e.g. Parent(Person)
+    - predicates
+      - take in objects
+      - produce T or F
+  - You can use sentences using logical connectives
+- Models for First-Order Logic
+  - List in table predicate, argument, value
+  - This blows up quickly
+  - Which leads us to...
+- Quantifiers
+  - Make statement over all of a variety of objects
+  - A way to say "all fish have fins"
+  - Form is *variable* + *binding rule*
+  - *Existential quantifiers*
+    - there exists *obj* such that *predicate*
+  - *Universal quantifier*
+    - for all *obj* *predicate*
+  - Un quant v strong so use weak sentence
+  - Ex quant v weak so use strong sentence
+- Common pitfalls
+  - obvious or overly strong statements
+  - making a statement such that if it doesn't match obj part it'tly satisfied
+- Search with first-order
+  - We don't want to use w/ vars 
+  - Make ground terms
+  - Instantiating: dump preds into out knowledge base to make gros
+  - *Skolem constant* stand in name that is single thing that can in later things
+- PROLOG
+  - PROgramming in LOGic implements these ideas
+  - Inference rules (using :- syntax)
+  - Facts (using fact(obj)) syntax
+  - It'll only tell you about things that it can definitely infer
+  - People used to think this was how you were gonna use this to intelligent machines
+    - Prob with these are *knowledge bottleneck*
+**** Baysian Probability <2019-09-26 Thu>                        
+Schism between *frequentists* (T-tests etc.) and *subjectivists* , AI). 
+
+*Joint probability distribution* $P(X_1, ..., X_n)$
+Simply the probability that $X_1$ happens *and* X_2 happens etc.
+They're verry useful.
+Mutually exclusive set of values for Random Values (R.V.s). 
+It is more expressive than logic because it expresses _degrees of rather than indifference *but* often requires more knowledge than we have. 
+
+A given B: Often we are working with something like ".3 out of .7 
+- classification: A given knowledge B...
+- co-occurrence: A and B
+- something else?...
+
+*Independence* independent if P(A and B) = P(A)P(B). 
+P(A or B) = P(A) + P(B) - P(A)P(B)
+
+*Conditional independence* common cause explains A and B's seeminence
+
+*Bayes law* $P(A|B)=\frac{P(B|A)P(A)}{P(B)}$ 
+- The left hand numerator is split into
+  - sensor
+  - prior
+So Baysian reasoning integrates prior knowledge with the quality ensor.
+
+**** Bayes nets <2019-09-26 Thu>                                 
+***** Bayes net
+DAG, node per RV. *not* necessarily a tree. Graph used to represedency relations => *given* parent, children independent RVs. 
+
+It is actually a datastructure that we need to add semantic meani
+
+We can do this:
+$P(X_1,...,X_n)=\Pi_i P(x_i | parents(x_i)$
+
+***** CPT: conditional probability table:
+One of these exists per node
+X -> P(X=t | Y=? and Z=?), P(X=f | Y=? and Z=?) for every settingd Z. In the case of two RVs, each setting of Y and Z is associated with a two-row cell, one setting with prob X is true and another with prob X is false.
+
+It can be hard computationally hard, but you need far fewer entri one value implies the other (add up to 1).
+***** Inference algorithms
+> What does it mean to "sum out"? 
+--> Over all possible values of the variables you're summing out
+- Variable elimination: we can pull stuff out of the inside loops computational cost
+***** Sampling
+Algorithm:
+- find node w/ no parent
+- sample from "marginal distribution"
+  - > what's that?
+  - random number to choose
+- condition children on choice
+"How would things go?"
+***** Naive Bayes
+> How can we "normalize" the bottom?
+Tradeoff: compression vs flexibility
+**** HMM <2019-10-01 Tue>                                        
+Inference is the model of a frozen  moment: doesn't deal with time. We'll generate a concept of state at a particular time.
+
+*Markov Assumption*: future independent of past given present $P(S_t|S_{t-one} .... S_0)=P(S_t|S_{t-one})$
+
+*State machines* Implicit is the idea of time steps
+- accept markov model
+- probs don't change with time
+- evt spc don't change with time
+
+*Hidden state*
+- State inferred by obs
+
+*Types of model*
+- prediction
+- smoothing: 
+- most likely path
+a|a => "a to a" 
+**** Midterm <2019-10-07 Mon>
+***** Notes
+- What is a knowledge base vs a model, how do they interact?
+  - a model takes every variable in your knowledge base and sets it to true or false
+  - a model satisfied a knowledge base if it satisfies every sentence in that KB
+- What are the key differences between search algorithms we've discussed?
+  - Uninformed
+    - BFS: maybe soln shallow, time $O(b^m)$ space $O(b^{m+1})$ (need to hold front. at mth lev in mem)
+    - DFS: maybe soln deep, time $O(b^d)$ space $O(bd)$ ((b-1)d bc at each lev b-1 other children you skipped that are waiting in the frontier)
+      - can arrive at suboptimal solution (cost of solution higher than it could be)
+    - BDS: Like bds but better time $2 * O(b^{d/2})$
+    - IDS: guaranteed optimal solution and not the worst memory cost
+      - best alg. when states take up a bunch of mem and we don't know depth of soln
+  - Informed
+    - Uniform Cost Search: Generalization of BFS but best cost first, a bit informed
+    - Informed Search: Uses cost-so-far and estimates cost-to-go with heuristic
+      - A* assesses the cost at a given depth using heuristic, an example of informed search
+        - If A* h admissable it will find the optimal soln (like bfs)
+        - O(bd) space complexity like dfs
+- What is the intuition between Baysian reasoning?
+- How do you expand a Baysian net?
+***** Flashcards
+****** Space and time complexity of BFS
+Space: O(b^{m + 1)
+Time: O(b^m)
+Dominated by space in practice
+****** Space and time complexity of DFS
+Space: O((b-1)(d-1)) = O(bd)
+Time: O(b^d)
+Could find suboptimal solution
+****** Space and time complexity of BDS
+Time: 2 * O(b^{d/2})
+****** Space and time complexity for IDS
+Space: O(bd)
+Time: O(b^d)
+In practice like dfs but guaranteed optimal
+****** Space and time complexity of A*
+Space:
+Time: O(bd)
+Guaranteed to find optimal solution
+In practice better than IDS because you're not repeating work
+****** Space and time complexity of uniform cost search
+Like BFS but generalized such that we view all the nodes of a particular cost first
+****** Bayes Law and parts
+P(A|B)=\frac{P(B|A)P(A)}{P(B)}
+B is the *evidence*
+P(B) is the *marginal probability* of the event B
+A is the *prior* and P(A) is the probability of the prior
+P(B|A) is the *sensor model*
+****** Random variable
+A number attached to a random process that we attach a name to
+e.g. The number on a dice after it is rolled
+e.g. The number of people who prefer watching game of thrones
+****** Joint probability distribution
+A probability distribution that deals with multiple RVs
+****** Marginal probability
+marginal_prob(a)=sum(P(a and b)) for every value of b
+It's a way to get p(a) independent of all other RVs
+This would be on the "margins" of a cpd
+****** Conditioning
+We can also sum conditional probabilities similarly P(Y)=sum(P(Y|z)P(z)) for all z
+****** When to prune in alpha-beta pruning
+alpha: highest guaranteed value for the maximizer, update at maximizing step
+beta: minimum guaranteed value for the minimizer, update at minimizing step
+We've found something we're not supposed to see! They'll never choose us! Abort!
+If we're the minimizer we prune if v < alpha since we know this branch won't be taken
+If we're maximizer we prune if v > beta since we know this branch won't be taken
+Mnemonic alpha is before beta and alpha is higher than beta, highest first.
+****** Dominant strategy
+Strategy *dominated* by S* if S* always gives higher payoff
+Strategy S* *dominant* if dominates every other strategy
+****** Iterated dominance
+Iteratively cross out rows that are dominated, alternating players
+****** Knowledge base
+A collection of sentences that we hold to be true
+****** Model
+An assignment of values to each predicate
+If it matches with the sentences in our KB than it satisfies the KB. 
+**** Classical planning <2019-10-15 Tue> 
+- Pre-prob.
+- Parts:
+  - Domain w first ord log
+  - Actions
+    - Preconditions
+      - KB(t) must be T
+    - Effects
+  - Start state to goal
+- Impl--PDDL: Planning Domain Description Language
+  - Domain
+    - Collections of predicate names
+    - Operators: actions
+      - Args
+        - Name
+        - Parameters
+        - Preconditions
+        - Effects
+      - Implicit Markov assumption
+      - Exectution
+        - Check precon
+        - decide to exec if good action
+        - remove anything w/ "not" (neg eff)
+        - add pos eff
+  - Goal
+    - Predicates not listed are: *Don't care*
+      - Partial state expr
+  - Problem
+    - domain
+    - objects
+    - init state
+    - goal
+- Closed world assumption
+  - Unspec assumed to be false
+  - We avoid:
+    - inference
+    - know what act can be exec
+    - know goal
+  - Planning difficult regardless
+- Choosing actions
+  - Yet another search prob
+  - Hopeless bc large branching factor and depth
+    - Implies informed search
+      - Relaxation
+        - Transform prob to make easier
+        - Use easier prob as heur for hard prob
+        - e.g. *FFPlan*
+          - Throw away deletes
+          - Only add
+      - Regression planning?
+        - Maybe going backwards will have smaller branch fact
+        - Not that much better really?
+      - Exploiting expert knowledge
+        - Hand written node pruning rule
+        - Domain specific
+        - Decrease branch fact
+        - Try to generate auto
+          - PRODOGY
+          - Not quite there yet
+      - Specify partial plans
+        - Heavily correlated actions form "macro action"
+          - e.g. taking doornob opening door
+        - Hierarchy of goals
+          - subgoals must be completed before parent goals
+- Getting outside the box of classical planning
+  - Time
+    - diff time cost
+    - preconditions depend on time
+    - we can wait
+  - Resource
+    - fin res
+    - costs to acts
+    - exchgn res
+  - Effect on search
+    - Time
+      - pred T for inter
+      - objs take inter as arg
+      - same time acts -> multiple edge for single action
+    - Res
+      - ...
+  - Much harder, much research
+- e.g. DART
+  - Prob
+    - moving food
+  - Very effective
+    - saved money like 30 yrs of ai resrch in 4 yrs
+    - rapidly recompute
+**** Probabilistic planning <2019-10-17 Thu> 
+- Need uncertainty to understand real stuff
+- Changes
+  - not single line from act, multiple lines with different probabilities
+  - "prob dist over transition"
+  - T(s'|s,a)
+  - cost $\leftarrow$ reward, repr same thing R(s, a , s')
+    - before didn't need s', now we have a mult poss outcomes
+- Extend Markov property
+  - all conditioned on action, not state
+  - decision is based only on current state s_t
+    - we build the system such that this is the case
+    - we don't want to deal with variable len hist
+- *Markov Decision Process* (MDPs)
+  - very important, capt large class of probs
+  - Model
+    - set of states
+    - set of actions
+    - actions cause stoch trans
+      - dep only on pev state
+    - agent chooses actions to maximize reward *summed over time*
+  - Math
+    - < S A D(gamma) R T >
+      - set of states
+      - set of acts
+      - discount fact
+      - reward func
+      - trans func
+  - we sum rewards because of individual states that are good with bad consequences
+- Method
+  - maximize *return*: E(sum of discounted rewards)
+    - $R^{\pi}(s)=E(\sum_{0}^{\infty}\gamma^ir_i)$
+    - all future rewards
+    - $\gamma$ impl now matters more than later
+    - gamma is usually very close to 1, if it goes too many steps agent will be indifferent to winning
+    - $\pi$ impl dependent on certain state?
+  - discount gives rew prop to steps from goal
+- Absorbing state
+  - end of game "loop"
+  - p=1, r=0
+- Policy
+  - $pi$ is a policy
+  - plan: sequence of actions
+  - policy: action for every state
+    - more resiliant
+    - closed loop plan, based on feedback as opposed to plan
+- Optimal policy
+  - $\pi^*$ that gives optimal action at each state
+  - *value function* is an estimate: $V^\pi=E(\sum)$ that we use to improve $\pi$
+  - Monte Carlo
+    - take samples of Rewards given policy
+    - $V^\pi(s)=R_1(s) + R_2(s)... / n$
+    - run policy until absorbing state or insig gamma
+    - always works, *but* high variance
+      - we depend on many, many random variables
+      - each RV depends on all prev RVs
+  - Bellman
+    - we can do better
+    - $R(s_0) = (R(s_1) - r_0) * \gamma$
+    - wrote  *the* dynamic programming alg
+    - cracks the prob of planning for
+    - V^\pi(s)=E_{s'}[r(s,\pi(s),s') + \gammaV^\pi(s')]
+    - *value iteration* we replace the value function using the states around it
+      - $\pi$ fixed
+      - if s is absorbing, value is always 0, never change
+      - greedily improving policy works: if we have pi that improves pi at other points it will improve V
+      - see slides for full policy
+      - value spreads backwards from goal
+      - we can solve states with millions of states
+- PDDL (again)
+  - we can use it with stochastic actions
+- E.g. we can solve elevator scheduling problem
+- e.g. micromap drivers and loads, used by 66,000 drivers
+**** Reinforcement learning I <2019-10-22 Tue> 
+Why?
+- Basically stats
+- Discovery: understand big datasets
+- Prog stuff that's hard
+- Flexible stuff.
+
+Types
+- supervised: strong labels, predict new labels
+- unsupervised: understand data's form
+  - no labels 
+  - "a little wigglie" 
+- reinforcement: sequential, weak labels (that was good, that was bad)
+  - like classical planning, but unknown T,R, and "online", and actually /do/ the actions
+
+U(s) vs Q(s,a)
+- gets rid of need for model P(a'|s,a)
+- with TD get rid of need for model for error as well
+
+Constraint funcs must hold at equalib if your other func (Q, U, etc) are correct (thus we can get our error)
+
+
+Language
+ - S: state
+   - s, s', state, next state
+ - A: action
+ - T(s, a, s') -> prob: transition function
+ - r(s,a,s'): reward 
+ - V_{\pi}(s'): value function
+ - *Q*(s,a): what you would have received a first action, rest with policy, state-action value function
+   - four actions=>four value functions, one per action ?
+ - gamma: discount
+ - pi: policy
+   - don't keep pi, just max of max Q
+
+sarsa(λ)
+ - rollout i steps ahead
+ - discount future steps, multiplying by an additional λ each time
+ - with λ=1 monte-carlo where you get to the end and then propegate back
+ - with λ=0 just sarsa
+ - give smaller and smaller rewards behind you, shrinking by lambda eachtime
+ - e = eligibility =
+   - at time t
+     - e(s_t, a_t) = 1
+     - e(s_i,a_i)=γλe(s_j,a_j) across j!=i
+   - at end of episode
+     - e(s_i,a_i) => 0 for all i
+       
+Now we choose how to update state-value function (Q)
+ - Monte Carlo: sample
+   - always works but high variance and slooow
+ - Bellman (dyn prog)
+   - we don't have exp bc time so we sample to dim?
+   - *temporal difference error*: (TD) samp seq act
+     - "push the left towards the right"
+     - Impl: *sarsa* state action reward state action
+       - delta: error
+       - alpha: learning rate "how far along do you go", 0.1 usually
+       - Q zero for absorbing state, edge case
+
+Slipping chance: goes bad
+
+Learning curve
+
+Exploration vs exploitation: choose max always? nah you got bad data
+- we choose with probability epsilon
+
+Mid btwn TD and MC: monte carlo vs bell?
+ - Look two steps ahead, or 3
+ - lambda: weight, another discount
+
+Impl: Y=gamma, we go gamma*lambda
+- delta what whould have happened 
+- e: eligibility, how recently you saw state action pair? how much you want it to happen?
+**** Reinforcement learning II <2019-10-24 Thu> 
+Real world has many state action pairs, states may never repeat, e.g. might be an inifinite function. 
+ - Need to *generalize*.
+
+Thus we need function approximator *Q* with parameter vector *w*: R^n --> R.
+ - we square error to get magnitude
+ - *w* is the only free thing
+ - we choose it to minimize TD error
+
+SARSA we get rid of /f/ and /N/ that we've used previously to explore: use simpler exploration policy
+ - take act bef eval how good so explores
+
+We can choose *Q* in different ways. 
+- e.g. linear descent, go down error slope using derivative
+
+E.g. use basis function
+- phi1...phin basis functions.
+- Q as weighted lin comb of phi funcs of s,a
+
+Poly basis funcs
+ - [1,x,y] --> plane over x,y
+ - polynomial basis: use Taylor series --> inf expressability
+   - [1,x,y,xy]
+   - [1,x,y,xy,x^2,y^2,x^2y,y^2x,x^2y^2]
+
+Fourier functions (cos and sin w/ coef) make swoopy stuff 
+
+Q hat means approx of Q
+
+each term vector of len num basis
+
+Some math lets us go straight to minimum
+
+Some downsides but fastest till recently
+
+Lin methods don't scale: exp num basis funcs
+
+policy search, theta: params we're gonna change
+
+hill climbing: simplest sampling strategy
+- cant get deriv of pi
+- you can provide structure
+
+if you /can/ get deriv of pi can make small num parm Q func
+**** Supervised learning <2019-10-29 Tue> 
+- label hot dogs
+- classification, not regression
+- k-fold cross validation
+- hypothesis space/class: possible functions
+- decision boundary: boundary at which label changes
+- decision trees you pick attributes
+  - I information
+  - A label
+  - f_1 number data points in first class, f_2 data points in seconds class
+  - maximize /Gain/ func to choose split
+  - remove as much info as possible while doing this
+  - finding which to choose first
+- real num dec trees impl use ineq
+**** NLP <2019-11-12 Tue> 
+- Big rewards if we solve NLP, language == intelligence?
+- "I saw a bat"
+- Component problems
+  - "the cat sat on the mat" -> SatOn(x=cat,y=mat)
+  - disambiguation: which cat, which mat
+  - incorporation: SatOn(cat3,mat16)
+- *Pereception*
+  - sount -> phonemes -> words
+  - accents
+- HMMs
+  - prob obs given phoneme
+  - prob phon_2 following phon_1
+  - used k models
+- Deep Net
+  - replace sensor with neural net
+  - recurrent nets: put some loops in the net to account for pre states
+- *Syntactic analysis*
+  - rules + structure
+  - "colorless green ideas sleep furiously" -- George, 2019
+  - Noam Chomsky
+- Formal Grammars
+  - terminals + non-terminals
+  - production rules transform non-terminals
+  - stop when all are terminals
+  - terminals are lowercase
+- Context Free Grammars (CFG)
+  - nomatter /context/, can replace left w/ right
+  - nice recursively
+  - less powerful
+- Probabilistic CFG
+  - $A \longrightarrow B[0.3]$
+  - more vs less likely sentences
+  - lexicon: prob dist over words
+  - grammer: defines rules
+- Syntactic parsing
+  - make syntax tree of choices in lexicon to make sentence
+  - can be ambiguous
+  - (when possible, disambiguation handled by probabilities)
+- Machine translation
+  - way 1: intermediate formal language
+    - hard to define formal language
+    - fails for metaphors etc.
+    - real life language is different from written language
+  - way 2: directly translate
+    - neural net translates with no understanding
+    - works pretty well (e.g. Google Translate) bc we have so much data
+      - e.g. EU documents
+*** Writeups
+**** Capstone recognize iclicker questions  <2019-09-11 Wed>        :idea:
+**** AI search write up                                       :assignment:
+***** Definition
+My heuristic function is half the minimum required steps to move each tile into its final position, and since in this game tiles can only be moved in the cardinal directions, this is synonymous with the Manhattan distance divided by two. For example if the game board matches the goal state save for a pair of tiles, both of which must swap with an adjacent tile, then my heuristic function would produce 1: $\frac{2 moves}{2}$. More formally, if $s_i$ is a state and $t_{i0}$ through $t_{in}$ are the tiles of that state, and $m(t_{ij})$ is the minimum number of swaps to get tile $t_{ij}$ into its goal position, then $h(s_i) = \frac{\sum_{j=0}^{n} m(t_{ij})}{2}$
+***** Proof of admissibility 
+Suppose for the sake of contradiction that $h$ is not admissible. Then there is some case in which $h$ overestimates the number of moves to be made to get to a goal state. Thus, for some state $s_k$, $h(s_k) > h^*(s_k)$. Thus, there must be some tile in $s_k$, called $t_{ki}$, in which $h$ overestimates the minimum number of swaps necessary to get it into its goal position. Therefore, either:
+ - $t_{ki}$ is in its goal position and $h$ estimates a non-zero cost
+   - However, $h$ correctly estimates a zero cost in this case: $m(t_{ik})/2 = 0 / 2 = 0$ so this is a contradiction
+ - $t_{ki}$ is not in its goal position and $h$ overestimates the number of moves necessary to achieve its goal position.
+   - Then there is series of swaps that will result with $t_{ik}$ in its final position in under $m(t_{ik}) / 2$ moves. Thus there must be some swap that costs under 0.5, meaning the swap must move more than two tiles into their final position. However, with a swap, since only two tiles can move, the maximum tiles that can be put in their final positions is 2. This is thus a contradiction.
+Since assuming  that there is some state $s_k$ such that $h(s_k) > h^*(s_k)$ leads to a contradiction, there is no such state and $h(s_i) \leq h^*(s_i)$ for all $s_i$. Thus $h$ is admissible. $\square$ 
+***** Why this heuristic?
+This heuristic expands more than others while still being admissible. For an extreme example, we can take $h(s) = 0$. This is admissible but since it is so optimistic it is not very useful, intuitively we can see that it gives us very little information. The more our heuristic can differentiate the positions, the better. Another example might be $h(s) = \sum_{j=0}^n g(t_j)$ where $g(t_j)$ is 0 if tile $t_j$ is in its final position and 1 otherwise. This is also admissible and gives us some information, but it is still a worse heuristic since it is always under my chosen heuristic. Since my heuristic is always over this heuristic while still being admissible, my heuristic is always closer to the true cost than this one.
+**** Adversarial Search                                       :assignment: 
+Handout notes:
+- minimax searches down to the terminal states
+- alpha beta like minimax with pruning, alphabetacutoff like alpha beta but only going down a certain way and then eval w/ cutoff func
+- general minimax has crucial difference of supporting more than two players and *not* alternating!
+- there are multiple ways to implement the generalized minimax algorithm:
+  - all agents positive, want max own score irrespective of others
+  - faithful approach
+    - everyone trusts that everyone else will always do what is in their best interests to do
+  - conservative approach
+    - use maximin: i.e. ensure the best worst-case scenerio for that actor
+    - *this is what we will do*
+- 3.3 at the bottom includes illustrations of what the testing DAGs look like
+- Game states are just a set of numbers, the transition function transforms them into other game states
+
+
+*function* MINIMAX-DECISION(state) returns *an action*
+  return arg-max_a∈ACTIONS(s) of MIN-VALUE(RESULT(state,a))
+
+*function* MAX-VALUE(state)returns *a utility value* 
+  *if* TERMINAL-TEST(state) *then return* UTILITY(state) 
+  v←−∞
+  for each a in ACTIONS(state) do 
+    v←MAX(v,MIN-VALUE(RESULT(s,a)))
+  return v
+  
+*function* MIN-VALUE(state) returns *a utility value* 
+  if TERMINAL-TEST(state) *then return* UTILITY(state)
+  v←∞
+  for each a in ACTIONS(state) do
+    v←MIN(v,MAX-VALUE(RESULT(s,a)))
+  return v
+  
+So MINIMAX-DECISION calls MIN-VALUE which calls MAX-VALUE
+Also, minimax outputs an action from the most immediate layer even though it goes through many layers to search.
+**** Adversarial Search Writeup                               :assignment:
+***** Maximin $\leftrightarrow$ CKR
+If you are playing a 2 player constant sum game, then you know that your opponent will always maximize their score assuming that you will do the same with the knowledge that they will do the same etc. Since the game is constant sum and two player, your opponent trying to maximize their score is the same as them trying to minimize your score. This means that when it is their turn your opponent will try to make you go down to the worst case outcome, and they will do so in the most rational and effective fashion. Thus, anticipating your opponent's minimizing steps while you try to maximize your overall score is choosing the best of the worst possible outcomes. Thus this is choosing the maximin action.
+
+Now let's go the other direction: If an action is the maximin, then it is the best worse case outcome. Suppose this wasn't the rational move under CKR. This would mean that you could make another move that would maximize your score higher under CKR. Since this game is zero sum, this means that this decision would lead to a state with a better outcome for you and worst for your opponent. As argued above, the fact that the game is two player and zero sum means that your opponent is always trying to minimize your score. Since we are under CKR these minimization attempts would be perfectly rational and would lead to the worst case outcome your partner could guarantee given an action. Thus you being able to get a better score means that you found a better worst case outcome. But then the move wouldn't have been the maximin action.
+
+From this informal argument, I hope it is convincing that in a in two-player, constant-sum games, an action is a maximin action if and only if it is the rational action to play under CKR.
+***** Is it the best?
+I would way yes, unless the other player isn't rational under CKR. Perhaps you could expect them to make a foolish mistake, in which case you could get a higher score through some other strategy, since minimax will always get you the best *worst* case scenario while an irrational move might land you a not-worst-case scenario. 
+**** KRR writeup
+***** A truth value
+- $\neg D \wedge E$
+| D | E | Result |
+| T | T | F      |
+| T | F | F      |
+| F | T | T      |
+| F | F | F      |
+
+Only when D is false and E is true is the statement true.
+
+- $C \vee D$
+| C | D | Result |
+| T | T | T      |
+| T | F | T      |
+| F | T | T      |
+| F | F | F      |
+
+Since we know that D is false and the statement is true, C must be true
+
+- $B \Longrightarrow \neg C$
+| B | C | Result |
+| T | T | F      |
+| T | F | T      |
+| F | T | T      |
+| F | F | T      |
+
+Since C is true and the statement is true, B must be false
+
+- $A \vee B$ 
+| A | B | Result |
+| T | T | T      |
+| T | F | T      |
+| F | T | T      |
+| F | F | F      |
+Since B is false and the statement is true, A is true. 
+***** Umbrella truth table
+"If it rains and you don’t open your umbrella, you will get wet"
+
+$R = \text{Is raining}$
+
+$U = \text{Umbrella is open}$
+
+$W = \text{Being wet}$
+
+$R \wedge \neg U \Longrightarrow W$
+
+| R | U | W | Result |
+| F | F | F | T      |
+| F | F | T | T      |
+| F | T | F | T      |
+| F | T | T | T      |
+| T | F | F | F      |
+| T | F | T | T      |
+| T | T | F | T      |
+| T | T | T | T      |
+***** First order logic
+- $\forall B, IsBook(B) \Longrightarrow \exists A, AuthorOf(A, B))$ 
+- $AuthorOf(\text{Sheryl Sandberg}, \text{Lean In})$
+- $\exists A_1,\exists A_2,\exists A_3,\exists B, IsBook(B) \wedge AuthorOf(A_1,B) \wedge AuthorOf(A_2,B) \wedge AuthorOf(A_3,B) \wedge A_1 \neq A_2 \wedge A_1 \neq A_3 \wedge A_2 \neq A_3$ \wedge (\forall A_4, A_4 \neq A_1 \wedge A_4 \neq A_2 \wedge A_4 \neq A_3 \Longrightarrow \neg AuthorOf(A_4, B))$
+- $\forall B, IsBook(B) \Longrightarrow \neg AuthorOf(\text{Mark}, B)$
+***** Propositional vs. first order logic
+Propositional logic has only the abstraction of booleans and boolean operators. Booleans can take on either true or false truth value and the operators include things like: implies, not, and, or. First order logic adds functions and objects. Like in the previous example, we can have objects like books and authors. Then we can have functions that act on objects to produce these booleans and we can still use boolean operations on the values returned. It also introduced existential quantifiers like "for all" and "exists". Thus it mainly builds on propositional logic to make a more powerful and elegant system. 
+**** HMM write up
+***** Translating to hmm
+- *Hidden state*: The hidden state in this situation was the /actual/ position of George's finger which we're trying to infer from the passed in observations.
+
+- *Observations*: These are the frames passed into our filtering function.
+
+- *Transition model*: For initial state $x_i$ I assigned all adjacent tiles $x_a$ where $|x_a - x_i| \leq 1$ the probability $p$ where $p=1 / |X_a|$. Notice that this $X_a$ contains $x_i$. This is in essence assigning the initial state and all adjacent tiles probability $k$ for some constant $k$ and then normalizing such that they sum to 1. All other tiles I assigned probability 0. The only exception to this was on the first move, in which I returned 1 for the observed state and zero for the rest since we were guaranteed that this would be an accurate observation.
+
+- *Sensor models*: For an observation $e_i$ and some constant $k$ I assigned $x_i$, the state suggested by $e_i$, the probability $k$, the adjacent tiles $x_a$ such that $|x_a - x_i| = 1$ the probability $k/5$ and all other tiles $k/20$. I then normalized such that the sum off all these probabilities added to 1. 
+***** How did I come to these decisions
+- *Transition model*: I chose a simple approach for the transition models: I assigned every adjacent tile and the tile of the ~old state~ an equal probability. Though I could have made a better model by breaking my Markov assumption slightly (which I'll get to later), this had the benefit of simplicity. Additionally, since it is a valid move to stay stationary, my model assigns this same probability to the tile that in the initial state has George's finger in it. My transition model is simple and doesn't make many inferences. It simply suggests what moves are valid from a given state, returns an equal probability for all of them, and zero for the rest.
+
+- *Sensor model*: For the sensor model I noticed through watching the simulation that the readings were often accurate, and that when the readings were inaccurate, they usually weren't far off. By this I mean that the actual hidden state was usually /adjacent/ to the observed state when it wasn't equal to it. Thus, I assigned a high probability that the observed state was accurate, and a lower probability that it was adjacent. I then assigned a quite low probability to all the other possible states. I didn't make them zero since there were sometimes significant errors in the observations: there's no guarantee that your observation won't be far off. But I wanted to make them quite low to indicate that the observations /usually/ weren't far off.
+***** My assumptions 
+In particular I made the assumptions mentioned in the handout: the Markov assumption, that future states are independent of the past given the present, and a similar Markov sensor assumption that present observations are independent of the past given the present state. This greatly simplified my process but didn't hold true in the actual model. Really, as stated in the /hints/ section of the handout, future states were dependent, not only on the present state, but on the previous state, and even on the state before that. George's finger was more likely to continue in its trajectory, a trajectory that would have to be inferred from the past state in relation to the present state; George's finger would stop and be more likely to go the previous direction after reaching an edge, and this too requires knowledge of whether your present state came after being not at the edge or at the edge, and also what your state was before staying still after reaching edge. I chose not to relax my Markov assumption because it simplified things greatly.
+
+***** Approaches I didn't end up using
+As I mentioned in the previous section, I chose not to relax my Markov assumption. I considered taking the argmax of my previous two distributions as George's previous two positions and use these to infer which direction George's finger was going, whether it had just reached the edge, and which direction it came from before getting to the edge. I also chose not to exploit certain information that I could have used even without relaxing my Markov assumption. Upon being at an edge, the hints mean that it is more likely that Georges finger will move away from the edge or stay still than that it will move along the edge. I didn't exploit this mainly because my implementation was already clean and simple and doing so would have introduced a lot of necessary case checking to see if I was at a corner or which side, and it wasn't particularly compatible with my implementation. I also could have used a more statistical approach in which I recorded numerous observations from the simulator and used these statistics to shape my sensor model. E.g. perhaps there's some pattern to the underlying George finger movement algorithm that would be picked up with enough observations. Again, I chose not to implement this because even my simple assumptions about the sensor model did pretty well.
+
+***** Smoothing and prediction inference tasks
+****** Smoothing
+As stated in the textbook, smoothing is computing the probability distribution over past states given evidence up to the present. So for some past state $X_k$ we could compute the probability that it was what it was given evidence $e_{1:t}$ if we're at timestep $t$. We use the recursive "backward" message starting at some past timestep $k$: $P(X_k|e_{1:t})=\alpha f_{1:k} \times b_{k+1:t}$ where $f$ is the forward filtering algorithm discussed in the handout and $b$ is the recursive function running backwards from $t$: $\sum_{x_{k+1}} P(e_{k+1} | x_{k+1})P(e_{k+2:t}|x_{k+1})P(x_{k+1}|X_k)$. As you can see, the middle term of this relies on the next state, and we update this middle turn recursively until we get to state $t$. 
+
+Practically speaking, we would use this to get better estimates about what our previous state was leading up to the present state. Especially if we had relaxed our Markov assumption and were saving previous states, we could use the new evidence to update that guess of a previous state. 
+
+To implement it, we would have to save our previous observation $e_k$ so that we could use it in $b$. However, our transition model and sensor model give us the first and third terms of the $b$ equation. 
+****** Prediction
+With prediction, we can examine future probability distributions where our state is at timesteps $t+k$ for some $k$. Since we can't rely on our observations up to that timestep (we don't have those observations yet), after doing the normal filtering up to our current observation and timestep, we need to rely on the transition model. As the textbook says, prediction can be seen as the process of filtering without new evidence. E.g. $P(X_{t+k+1}|e_{1:t})=\sum_{x_{t+k}} P(X_{t+k+1}|x_{t+k})P(x_{t+k}|e_{1:t})$. Assuming we already have stored our current filtering probability $P(X_{t+1}|e_{1:t+1})$ and our past observation, we don't need any input except for how many timesteps in the future we want to predict. Then we can use the above recursive formula to go as many timesteps as we choose. The output can, in a similar fashion to ~filter_noisy_predictions~, be a probability distribution over the touchscreen, this time a probability distribution of where George's finger will be in $k$ timesteps.
+**** RL write  up
+***** Probabilistic planning vs RL
+****** Foundational difference
+In Probabilistic planning you know the transition function and the reward function. Thus you can compute the policy before taking any actions. In reinforcement learning you are approximating the model, with one or both the transition function and reward function unknown. Your agent actually takes actions instead of reasoning /about/ taking actions. 
+****** One consequence
+One consequence is that you can use RL in situations where you don't know the model, i.e. a diverse set of difficult problems that would be hard to address with planning. 
+****** Example of PP and model as RL
+A maze can be simulated as a probabilistic planning problem. S = grid locations, Actions = { up, down, left, right}, Transition = move in dir of action with p = 0.9, R = -1 per step, 1000 for goal.
+
+As an RL problem one or both of the transition function or the reward function are unknown. So we could keep our S, A, and R functions, but we don't know the Transition function. Thus, the agent would sample and by taking actions and observing the state changes and rewards. 
+
+The latter would eventually settle with Q being a reward function that rewards actions that go towards the goal more than those that don't, whereas the former can, with no sampling, allow the agent to plan out all series of steps and choose the policy that leads to the highest expected reward. 
+
+***** Tradeoff of best action vs other action
+This tradeoff is called exploration vs exploitation. If your agent only chooses $a^*$ then it will get stuck at local maxima. One way to manage this tradeoff effectively is to choose a random action that is not $a^*$ some of the time. How often to do this can be managed with a hyper parameter $\epsilon$. At each step your agent can choose a random action with probability $\epsilon$. Thus $\esplison$ portion of the time your agent explores and $1- \epsilon$ portion of the time your agent exploits what it thinks is the best action.
+
+***** Adversarial search as MDP
+Knowing that Red will always choose the best worst case scenario, we can eliminate outcomes that Red would never choose, thus shrinking the tree to be only Blue nodes. E.g. we can get rid of D and G because they have worse worst-case outcomes than E and F. We can reflect this in our transition function such that $T(s, a, s')$ is 1 if s' is below a red state and it is the maximin action from that red state, 0 if s' is below a red state and it is /not/ the maximin action from that red state. In other cases if it is a valid transition (i.e. it doesn't go backwards up the tree) it has probability 1.
+
+Since there is zero probability of landing in states D or G, we don't need to consider them. Thus, we get:
+
+$S={A,E,F}$
+
+The rewards from going to the best case outcome of D or G can be propagated up in our Q function as follows:
+
+Q:
+|   |  A | E |  F |
+| l |  1 | 1 |  7 |
+| r | 10 | 0 | 10 |
+
+
+***** Learning curve taxi sarsa
+I used the default learning rate: $\alpha$ = 0.2
+
+[[file:../../../Code/cs1410/RL/rewards_plot_taxi_sarsa.png]]
+
+***** Learning curve taxi sarsa lambda
+I used the default learning rates: $\alpha$ = 0.2, $\lambda$ = 0.1
+
+[[file:../../../Code/cs1410/RL/rewards_plot_lambda.png]]
+
+**** SL writeup
+***** Binary features
+****** AND
+| p1 | p2 | label |
+|  1 |  1 |     1 |
+|  1 |  0 |     0 |
+|  0 |  1 |     0 |
+|  0 |  0 |     0 |
+
+$$(1, 1) * w + b > 0$$
+$$(1, 0) * w + b < 0$$
+$$(0, 1) * w + b < 0$$
+$$(0, 0) * w + b < 0$$
+
+if w = (x, y) then:
+$$x + y + b > 0$$
+$$x + b < 0$$
+$$y + b < 0$$
+$$b < 0$$
+
+Consider:
+$$b = -1$$
+$$x = 0.5$$
+$$y = 0.6$$
+
+Then:
+$$0.5 + 0.6 + (-1) > 0$$
+$$0.5 + (-1) < 0$$
+$$0.6 + (-1) < 0$$
+$$-1 < 0$$
+
+All of which hold true.
+
+****** OR
+| p1 | p2 | label |
+|  1 |  1 |     1 |
+|  1 |  0 |     1 |
+|  0 |  1 |     1 |
+|  0 |  0 |     0 |
+
+if w = (x, y) then:
+$$x + y + b > 0$$
+$$x + b > 0$$
+$$y + b > 0$$
+$$b < 0$$
+
+$$b = -0.5$$
+$$x = 1$$
+$$y = 1 $$
+satisfies this.
+
+****** XOR
+| p1 | p2 | label |
+|  1 |  1 |     0 |
+|  1 |  0 |     1 |
+|  0 |  1 |     1 |
+|  0 |  0 |     0 |
+
+
+if w = (x, y) then:
+$$x + y + b < 0,$$
+$$x + b > 0,$$
+$$y + b > 0,$$
+$$b < 0$$
+
+I think that this isn't possible because the above equations imply that x and y must both be positive and of greater absolute value than b, but when added together must either be of less combined absolute value than b or must be negative. This is a contradiction.
+
+***** Question 2
+****** Linear separable
+No because we need to use some linear combination of x and y to express distance from the origin. Thus 
+$$w_1*x + w_2*y + b = \sqrt{x^2 + y^2}$$
+If we try to solve this, the weights cannot simply be integers, they must be factors of x or y.
+****** Additional features
+$$w * \langle x, y, x^2, y^2, x*y \rangle = \sqrt{x^2+y^2}$$
+Yes, in this case it is linearly separable because we are adding information with the additional features that we can use to express further dimensions. With the additional information we can superimpose the circle in the third dimension such that when viewed from above it is identical (i.e. it's translated up on the z axis but still the same in x and y). Thus, using a line, we can separate it from the other plane.
+*** Assignment notes
+**** HMM
+***** Stuff to understand
+Pr(Xt+1|e1,2,...,t+1) =α·Pr(et+1|Xt+1)∑xtPr(Xt+1|Xt)·Pr(Xt|e1,e2,...,et)
+What are filtering and prediction?
+***** Part 1: 
+Generic hmm for filtering and prediction. Make a prediction across a selection of hidden states.
+**** RL
+- can change iterations if we converge fast enough
+- mountain_car_saved_weights_grading.npy
+- gym Taxi-v2 problem: 25 squares 5 locations 4 destinations -> 500 states
+- blue states? (written) @747
+- env.close solves gl error: if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        "*** run without input arguments to learn ***"
+        create_multipliers()
+        SARSA_Learning()
+    elif sys.argv[1] == "test":
+        "*** run to test the saved policy with input argument test ***"
+        create_multipliers()
+        weights = np.load("mountain_car_saved_weights.npy")
+        num_test_episodes = 100
+        SARSA_Test(num_test_episodes)
+    else:
+        print("unknown input argument")
+    env.close()
+- use np as much as poss
+- use "done" for absorbing state 786
+- common bugs:  forgetting updating current states, not updating eligibility trace correctly, etc. 787
+- can hardcode create_multipliers
+- phi uses cosine
+**** Hours
+we're using fourier 
+we need multipliers such that we produce pi, x*pi, y*pi, xy*pi
+the last? term on 13.15
+we want to compute the latter two terms on 13.16, tho we need to do the second first to get e
+
+
+Confused about what we're generating exactly. Order refers to order of the basis function. num_ind refers to number of basis functions. This is basically just the number of permutations of order 
+**** SL
+***** Assignment
+****** Generic SL
+- Features
+  - ensure correctness
+- KNN
+- Linear regression
+  - The second component of each datapoint (workingday), is either 0 or 1. Thus, there is no need to raise it to any power higher than 1. Doing so would cause the Singular Matrix error (since it is a binary variable, raising it to a power more than 1 would lead to more than one identical feature functions causing that specific error).
+- Perceptron
+- Testing
+****** Bike Regression
+*** Final flash cards
+**** DONE Robot planning
+***** Explain configuration space
+reference frame (robot) parameters that tell the state of robot for given t
+each joint is a dim in cspace
+we find path around obstacles in cspace
+***** Define convex region. Why is it important? Is it used?
+line btwen two pts lies inside region
+bc we can divide space into convex regions to avoid collisions
+ - we draw lines thru space
+ - if they don't violate the above def they won't collide
+It's not used much bc it only works for low dim probs: grows exp with obstacles
+***** What is a PRM?
+probabalistic road map
+build graph in advance
+***** What are RRTs?
+rapid random trees
+build tree at query time
+***** What are the tradeoffs between them?
+prm
+- precompute
+- 
+**** DONE Classical planning
+***** What does pddl stand for
+probabalistic domain description language
+define problem from  
+- operators
+- actions
+- predicates
+- states
+There's an implicit Markov assumption
+***** Closed world assumption
+predicates missing assumed to be false
+***** What type of search do we do?
+Can't use bfs or dfs, space typically too big
+We used informed search: domain specific heuristic
+***** What are the main ways of making it easier
+- what is relaxation?
+  - transform problem into easier problem
+  - use as heuristic for harder problem
+- what about regression planning?
+  - work backwards from dest to src
+  - remind you of somthing? *bidirectional search*
+- exploit domain specific knowledge
+  - groups of actions always acompany each other
+***** How is planning used by the top companies and by the military?
+time and resources planning
+- intervals of time
+- resources produced and consumed by actions
+- e.g. DART
+- like other probs but much harder
+**** DONE Probabalistic planning
+***** What are the key differences to classical planning?
+- plans can fail
+- thus need to model stochastically
+- can't use "straight line" plans
+- prob dist over possibe outcomes
+***** How are these problems formulated?
+- markov assumption
+- costs and rewards to transition
+- maximize reward summed over time
+***** What's a MDP?
+- S states
+- A actions
+- gamma discount
+- R reward func
+- T transition
+- pi policy
+maximize expected sum of rewards
+***** What are the major approches
+- Monte Carlo
+  - try random shit and return avg reward to absorbing state
+  - write discounted sum of rewards recieved giving V(s)
+  - avg the samples
+  - this results in a reliable strat but one w/ high variance
+- Bellman
+  - iconic dynamic programming
+  - use something we know to improve perf:
+    - V(s) = E[r(s->s') + gamma V(s')]
+  - use value iteration goint over with V to estimate
+**** DONE Reinforcement learning I
+***** What, broadly speaking, is it?
+a type of unsupervised l i.e. learning on labelless data
+specifically, sequential w/ weak labels (imprecise, not known)
+***** RL vs planning
+- Planning
+  - both T and R are known
+  - computation "offline" beforehand
+- RL
+  - either or both T or R might be unknown
+  - planning done "online" while actually doing shit
+***** What's the main difference in the process from planning?
+- we iterate on a Q function: state action reward func
+  - V^pi (s) = Q^pi (s, pi(s))
+***** Explain TD
+- temporal difference
+- basically bellman applied to RL
+- but use error func: 
+  - thisReward + nextEstimate - thisEstimate  = 0
+  - e.g. r_i + gamma*Q(s_{i+1}, a_{i+1}) - Q(s_i, a_i) = 0
+***** What is sarsa? how do you use the letters of sarsa?
+state action reward state action
+you get delta e.g. td error, then udate Q
+Q(s,a)=Q(s,a) + alpha*delta  
+***** Explain exploration vs exploitation
+***** What's that lambda doing?
+the lambda is yet another weight emph curr reward
+"decays traces"
+when lambda is 1 we get monte carlo 
+**** DONE Reinforcement learning II
+***** What is machine learning?
+unsupervised learning using experience to improvoe performance on some task
+***** PCA
+principle component analysis
+make (as much as posisble) orthoginal basis vecs to analyze data
+but sometimes things aren't linear
+***** What are neural nets
+- we can simulate heavily nonlinear functions
+- we can "autoencode" finding func to make desired output
+***** What is topic modeling
+NLP prob find topic of something based on words in it
+Latent Dirichlet allocation (LDA)
+ - use bayes net, P(word | topic) and extrapolate
+***** What is data mining?
+given lotsa data find what is possible to learn from it
+unsupervised
+touches on a lot of problems such as privacy
+**** Supervised learning I
+***** Classification vs regression
+classification if discrete, regression if real valued
+regression all curvy
+minimize sum squared error
+***** What's the hypothesis space
+it's the space of functions you can use to make hypotheses
+***** What's a perceptron
+***** How do we reduce error
+gradient descent
+
+**** Supervised learning II
+**** Unsupervised learning I
+**** Unsupervised learning II
+**** Philosophy of AI
+** PL
+*** Basic info
+3 Late days
+*** Lecture
+**** Basic principles <2019-09-04 Wed>
+- SMord Model of Languages 
+- SImard Implementation Plan 
+- Masd learning
+- Genssifieds: programs that distinguish the different languages
+- SMoquizzes with no penalty for wrong mark 
+**** Parsing <2019-09-11 Wed> 
+**** Fun <2019-09-13 Fri>
+- Reede reuses stack frame 
+- Man like ‘call by value’ are misunderstood 
+- In ard model of languages compound objects are aliesed where as values single values are not earliest
+- A cch like a variable can have aliases to it such as in python in which the closure of a lambda expression is reused for each lambda expression
+**** Environment <2019-09-16 Mon> 
+Traditionally
+(interp expr env)
+- You can extend and redefine env
+  - lambda $\leftrightarrow$ extend
+  - how do you overwrite for local scope?
+- Lambda is text & environment
+  - a closure
+  - the free vars have been boundwin closure
+  - a use either closure environment or global environment in eval
+- Loops homework
+  - Java: no closures anonymous inner classes
+  - it has rules to prevent having to dealw / implementing closures in architecture
+  - Racket :each lamda gets separate closure
+  - in for loop there is one mutable value
+  - with recursion you shaddow prev vals
+  - Python example used for sop that's why it
+**** Compilers <2019-09-18 Wed> 
+- Interpreters actually evaluate
+- Compilers change to new language
+- With syntax-rules we can define macros which can extend a language
+- Use the stepper to look at what your macros change (compile) to
+- Macros are essentially a lightweight compiler api
+**** Macros part 2<2019-09-20 Fri> 
+(define- syntax unless o
+(synthe rules () keycoords
+- condy body... )
+y (if (not condu )
+standin 1 (beginbody...)
+this case (void)) ]))
+for name
+"unless in
+
+Function evaluates all function arguments
+before body starts to run in standard modle.
+The ability to do this allows you to have a tiny
+language core, implementing everything elsewith
+macros,
+
+Macro-stepper lets us see that , as the macro
+expands, if renames conflictingvars a dynamic
+scope is bad. C isn't like this : direct text replacement
+We call this hygenic expansion .
+
+Racket fulsyness
+- false false, ese -strue
+- many func netumval instead of true
+- don'twaste info
+
+Concerns of mauros
+-performance : cupybig lines of code multiple times
+- side effects do side effects twice
+- soln : use (let tmp) and use this tmp not func
+that returns func HOPage 2
+Top ofPage
+
+Code as data: If code is just text (a-la
+c ) we have these hygene probs.But if we
+have a richer data type w / place its defined and
+other data, they go away.
+**** <2019-09-27 Fri>                                            :lecture:
+Having call operate on an ~exression~ name leads to ugly consequences. It breaks basic features of IDEs like renaming.
+
+Mixins and traits: 
+ - Program against interfaces
+ - All branches off the same base class at same level
+
+Parameteraize module
+**** Type checking <2019-09-30 Mon> 
+**** Type checking <2019-10-04 Fri> 
+Basic rules: 
+| $\dashv n: Num$      |
+| $\dashv s: Str$      |
+| $\dashv true: Bool$  |
+| $\dashv false: Bool$ |
+
+$\frac{\dashv b: T_2}{\dashv (\lambda (x) b) : (T_1 \rightarrow T_2)}$
+
+Top is antecedent, bottom is consequent
+
+This is a bit sketchy because T_1 not used. We can get around this by using type annotation for arguments. 
+
+We can also introduce an environment.
+
+$\frac{\Gamma\dashv b: T_2}{\dashv (\lambda (x) b) : (T_1 \rightarrow T_2)}$
+
+We can use the type environment to resolve variables.
+
+$\Gamma\dashv v: \Gamma (v)$
+
+_interp vs type_
+Interp steps through the body during application vs with type system we do it before application time. Additionally, w/out calls we can check code. We also have an upper bound of O(n) on this process, whereas there's no upper bound on runtime e.g. O(inf).
+**** Expressability <2019-10-07 Mon>
+|{1 2 3...}| vs. |{1 2 3... A}|
+Hilberts Hotel => inf weird |N| == |IN+1| |N| == |2N|
+*But* |2^N| > |N| proof can't provide bijection
+Lets take all sets of N and construct 01 strings representing membership in the set. Now do we have  all of them? No. 
+| -   |   0 |   1 | ... |
+|-----+-----+-----+-----|
+| S_0 |   1 |   0 | ... |
+| S_1 |   1 |   0 | ... |
+| ... | ... | ... | ... |
+Construct not of the diagonals can 't already be in the table. So they're not of the same size.
+
+Can we have an int plait. progs - no. fin char, fin num char
+How many func. s.t. type: int $\leftarrow$ Bool - Uncountable ,1291
+ => we can't express everything, sad.
+Halting problem - h(p,i) T iff p(i) stops
+**** Expressability 2:
+- halting problem
+  - g(x): if halts(g, x): loop forever...
+  - sound, complete, terminates: choose 2
+  - to reason about something you need to be more powerful than it
+    - this leads to a "tower of power" problem
+- ((lambda (x) (x x)) 
+   (lambda (x) (x x)))
+  - runs forever, after replacements looks exactly the same
+**** ACI <2019-11-01 Fri> 
+(lam k
+  aci x (lam xval 
+          ((aci y) lam yval 
+                     k xval op yval 
+**** Laziness <2019-11-15 Fri> 
+bottom up data flow graph
+
+Breaks big O
+
+Strictness point
+
+Thunc func of no args
+
+Lazy means can def infinite recursive functions
+*** Questions
+- coroutine vs thread?
+*** ML: FunctionCalls <2019-09-10 Tue> 
+**** Apply to called directly
+;; It actually doesn't matter where b is defined
+;; 
+(1 3) 2
+#lang FunctionCalls
+
+fun a(x):
+  fun b(y):
+    x + y
+  end
+  b
+end
+
+a(1)()
+**** Stack overflow
+;; It overflows at 750
+#lang FunctionCalls
+
+fun a(x):
+  if x == 0:
+    x
+  else:
+    a(x - 1)
+  end
+end
+
+a(100)
+*** Read/Do: loops <2019-09-12 Thu>
+Python:
+9
+9
+...
+9
+
+It seems that the i that is stored inside python's callback function is actually a pointer to the i variable. The loop changes the value of i and thus changes the return value of the function. This manifests in that at the end of the loop all of the callbacks have been set to return the last value of i: 9.
+
+Java:
+
+Buttons.java:29: error: local variables referenced from a lambda expression must be final or effectively final
+            Button b = () -> System.out.println(i);
+1 error
+
+Java refuses to compile, perhaps because of the ambiguity from the Python example. It wants the variable to be final so that it cannot change and thus lead to ambiguous return values from the lambda expression.
+
+racket:
+
+0123456789
+
+Racket encapsulates the value, not a pointer to it, inside the lambda expression. Thus, each callback returns the value that i took at the time it was bound, not the most recent value of i.
+
+*** ML: Fields
+**** [1 2 3 4] 5
+#lang Fields
+record = {"x": 1, "y": record["x"]}
+record["x"]
+**** [1 5] [2] [3 4]
+#lang Fields
+record = {1:2}
+record
+**** [1 5] [2 3 4]
+#lang Fields
+record = {"x":1, "y": 2}
+record["x"] := record[lam(): "y" end()]
+*** ML: MutableVars
+**** [1] [2 3]
+#lang MutableVars
+x = 2
+lam(y):
+  y:= 3
+  y
+end(x)
+x
+**** [1] [2] [3]
+#lang MutableVars
+x = 1
+fun outer(y):
+  y:=2
+  inner(x)
+end
+
+fun inner(z):
+  z:=3
+end
+
+outer(x)
+x
+*** ML: MutableStructures
+**** [1] [2 3]
+#lang MutableStructures
+x={"a":1}
+fun foo(y):
+  y["a"]:=-400
+end
+foo(x)
+x
+**** [1 3] [2]
+#lang MutableStructures
+x={"a":1, "b":{"c":2}}
+fun foo(y):
+  y["b"]["c"]:=-400
+end
+foo(x)
+x
+*** WAT
+#begin_src python
+[[]]==list([])
+(())==[[]]
+
+if [[]]:
+   print("double list")
+elif (()):
+   print("double tuple")
+else:
+   print("neither")
+
+True + False
+
+a=[[0]*3]*3
+a[0][0]=42
+a
+#end_src
+*** Typechecker Questions
+- Does children mean I should check children of if conditions before checking booleans?
+*** ML: EvalOrder
+**** 1 (2 3) 4
+#lang EvaluationOrder
+
+fun foo(x):
+  print("x")
+  x
+end
+
+fun bar(y):
+  print("y")
+  y
+end
+
+fun baz(x, y):
+  y + y
+end
+  
+
+baz(foo(1), bar(1))
+**** (1 3) (2 4)
+#lang EvaluationOrder
+
+fun foo(x):
+  print("x")
+  x
+end
+
+x = foo(1)
+foo(1)
+** Arch
+*** Basic info
+- Wednesday before class Alex office hours
+*** Responses
+**** Response 1 <2019-09-11 Wed> 
+As a non archaeology-concentrator, the readings were an interesting and necessary introduction to archaeology as a whole. Of course, this introduction was slightly colored by that it was coming from the perspective of someone who was trying to categorize historical archaeology in relation to archaeology's other forking branches and forms. Be that as it may, it gave me a much firmer grasp on both what archaeology is and why it is valuable. Indeed, the series of vivid images that Deetz transmitted were a more compelling sell than any I'd heard. They made me appreciate something that I'm sure is talked about often in archaeology classes but that I, as someone not exposed to these fields before, found particularly instructive: that archaeology isn't about digging. It is about finding accurate and rich stories of history through that history's remains. It also made me understand why we dig, why it is an effective medium. Digging allows us to bypass many of the biases in historical narrative to which we so often fall pray. Renfrew and Bahn's similarly made me appreciate the subtlety of archaeology. It drove home that archaeology is a field that is convoluted and finds influence both in hard and soft sciences. It is at once physical and cerebral, strenuous and meticulous. It is the study of humanity, but through the lens not of humans but of what they leave behind. It also made me appreciate the steps you must go through to combat your biases even as an observer far distanced temporally from the remains you're observing. This calls more into question other mediums that take fewer precautions to think about how the medium influences what you see. Already I find myself thinking differently about traditional historiography. The readings were illuminating, they took something that before had been opaque to me, and they made it bright and exciting. I'm looking forward to seeing what more we will explore.
+
+**** Response 2 <2019-09-12 Thu> 
+***** Notes
+[[docview:../../Documents/Brown2019-2020/Renfrew&Bahn_Ch2.pdf::20][Renfrew&Bahn Ch2]]
+ - Primary context vs secondary context
+   - humans affect archaeological record through time
+   - objects moved from place of original abandonment have secondary context
+ - Organic materials fragile, extenuating circumstance's can preserve them
+   - peat bogs
+   - lake dwelling
+   - dry environments
+     - Nile valley region
+     - e.g. Tutankhamun
+   - cold environments
+     - steppe nomads graves
+     - e.g. iceman
+[[docview:../../Documents/Brown2019-2020/Roskams_2001(Ch9,10,12).pdf::1][Roskams ch 9 10 11]]
+
+9: The stratigraphic record
+ - Slow means better results and more context
+ - 9.3 Calculating stratigraphic relationships
+10: Deposit descriptions
+ - 
+ - Who records and when?
+ - Computer storage of record
+ - Deposit descriptions in relation to sedimentology and pedology
+ - Deposit colour
+ - Soil particle size
+ - Compaction or consistency of deposits
+ - Inclusion within deposits
+ - Thickness of surface characteristics
+12: Excavating the stratigraphic unit
+ - Sampling strategies for finds
+   - accessioned find
+   - small find
+ - Methods of collection
+ - Troweling methods
+ - Making stratigraphic distinctions
+ - Completing the record
+ - Checking the record
+
+
+Areas of interest:
+ - What does the rigor actually give you?
+10
+ - Use of computers
+ - The need for comparability
+11
+ - Inhumations: skeletons and preserved corpses (links to R&B)
+ - Cuts: previous disturbances like graves
+12
+ - Relationship between artifacts and the methods used
+   - is it really precious? use dental tools
+   - is it kinda boring? scuff it up with a pickax!
+ - Trowelling technique: lot to it?
+   - strata: the subject of stratigraphy
+   - working to trowel in a way that doesn't obfuscate but rather illuminates detail
+   - don't make fake stuff
+***** Post
+This week's readings made me think further about the relationship of the archaeologist and the site that they excavate, and about the cyclic nature of archaeology. When we explore the strata, it is seldom that we are viewing an undisturbed unit, and often our focus moves from the object of our find to the context around the find. Sometimes we are excavating what someone else has excavated before, a grave already visited by looters, or a unit with a cut in the middle from an old well. This makes the stratigraphy more complex, but also richer, and it makes sense of why archaeologists use so much rigor in their excavation. This rigor is not for its own sake, but because the crisscrossing of human disturbances quickly adds massive amounts of complexity. Despite the abundance of complexity, it isn't uniform. Both Renfrew & Bahn and Roskams emphasize the relationship between the archaeologist and the excavation process, and that in different areas the archaeologist much use different tools and different approaches. In an areas particular interest with fragile materials, the archaeologist must use caution and switch to dental tools and brushes whereas in some cases a pickax might be far more appropriate. This reminded me of the first day of our dig. Since we were excavating the very upper layer, we were very unlikely to find something old, rather things more recently abandoned and thus less topical to the primary focuses of our dig. Thus we could excavate with much more speed than we will be able to in the future when we are in the strata corresponding to the nineteenth century. Something that both readings left an impression of, however, is the constant need for attention. Even in our upper layer troweling, we should be on the lookout for any changes and diligently note them for the sake of comparability and uniformity in our archaeological methods.
+
+**** Response 3 <2019-09-17 Tue> 
+***** Notes
+****** Material Culture and Text:Exploring the Spaces Withinand Between -- Patricia Galloway
+- Topic: material v. textual, what are their roles?
+  - material to test textual
+  - dissonance between material and textual
+  - academic elites even with pedestrian material
+- Actor Network Theory
+- Social Life of Objects
+  - "bricolage" of many subcultural varieties
+- Artifacts and Documents, Taken Together
+  - "deposition context" shared
+    - deposition: being deposited
+- Case study
+- Conclusion
+  - positivist and post postpositivist
+    - positivism is a philosophical theory that knowledge is based on natural phenomena
+    - postpositivism argues  that observer has a role in the observed, recognizing the possible effects of bias
+  - use triangulation to avoid pitfalls of both
+    - use many types of evidence
+  - make visible  all biases
+  - spaces between objects the realm of professional
+****** On the use of historical maps -- Nancy S. Seasholes
+- Topic: maps made during the project, and pitfalls of their usage
+- Introduction
+- Maps of urban areas
+- Maps of rural areas
+- Reconstructed maps
+- Conclusions
+  - method: assess purpose, audience, bias of cartographer, cartographic accuracy 
+****** Documentary archaeology -- Laurie Wilkie
+- Topic: historical archaeologists need a uniquely their own approach toward analysis of documents
+- The archive
+- Using documents archaeologically
+- Oral history
+- Seeing through archival lenses
+- Silvia freeman and Lucrecia Perryman?
+- A documentary archaeology of masculinity
+- Conclusions
+  - its power is in its freedom/lack of structure
+****** Points of interest
+- Relationship between viewer and viewed
+  - "arch is destruction"
+- How does hist arch deal with text?
+  - what role does it take?
+- Maps how does audience, bias, cartographer effect? Is it accurate?
+  - each type of map has lots  of  context 
+***** Response
+This week's authors all address the topic of an archaeologist's relationship with documents, how this relationship could be shaped or critiqued, and the pitfalls that it can present. I found this particularly fascinating because access to textual and documentary evidence is largely what technically separates historical archaeology from its many siblings. The approach to analyzing these documents therefor seems particularly important. It is, after all, a near exact representation of the human experience of those we are studying, giving us a unique look into the mental and emotional lives of those living at our point of study. Or is it? Much as we covered in the first week, textual and documentary evidence can fall prey to certain traps. It is more likely to be left behind by certain literate and wealthy people, and those same people are more likely to star as its central characters. Also, as Seasholes enumerates, there are myriad types of documentary evidence and each of them warrants its own contextual exploration. Not only are they accompanied by their own context, but they may, as Wilkie posits, need an entirely new framework of analysis. Wilkie argues that archaeologists can't necessarily borrow directly from some other discipline of analysis. For example, since historians deal in documents and documents alone, they have already limited the scope of their research and colored their methods to the point that it is unsuitable for archaeological research. Galloway proposes that this historical archaeological analysis should skirt several possible philosophical frameworks. These are most notably positivism and postpositivism, to what extend we should strive for objectivity or admit the undeniable effect of the observer. It seems that Galloway tends towards postpositivism, but also recommends a triangulation between different frames, such that each can enumerate the faults of the other. These authors were all emphasizing in different ways context and the need of attention and time spent analyzing it. We need to acknowledge both our effect on the material remains we examine, the effects of our personal context on the documents we explore, as well as the effects of the context of those that produced the documents and remains on the final product. 
+**** Response 5 <2019-10-01 Tue> 
+***** Household -- Allison
+- Build overemph
+- Artefact dist. better bc not gov. by oth.
+- But ofc you need combo of docs and artifacts
+- Australia: Little Lon excav ->
+***** Mrozowski 2006
+- Tate vs. Brown
+- Privies subj.
+- Fauna and diet comp.
+- Artf in privy
+***** Black Feminist Archaeology -- Battle-Baptiste
+- Throwback to Deetz!
+- "obscure" sites e.g. non euroamerican white male centric
+- Ppl question whether black culture part of site
+  - how did euram. arch inf this interp?
+- "aftertaste of slavery in the lives of free people"
+- household underrepresented
+  - arch domain of euroam men doing bold exciting things
+***** Response
+This week's readings were quite relevant to our digging on the Moses Brown site, emphasizing the importance of the household, not just in terms of its architectural structure, but also in terms of the structures that governed the lives of those within it. Like some of our previous readings, this week's authors critique methods of knowledge acquisition. Allison mention deficiencies of documentary and historical sources of knowledge for depicting the household, stating that these are so often influenced by those in power and subject to the power hierarchy of the contemporary society. She suggests something like artifact distribution as being less subject to these forces. Mrozowski also notes how certain archaeological methods can give us superior knowledge about the household, going into detail about how the comparative material remains of two privy can illuminate the lives and differences in life between different families. Battle-Baptiste critiques the field of archaeology in general for being dominated by the views of euroamerican males, dominated by a need to find exotic material and travel to distant locales rather than choose as a focus the daily drudgery of "normal" people. She notes that this is reflected in the distribution of "obscure" sites, and puts obscure in quotes to denote that there is more going on beneath the surface: there is a reason that sites like "Black Lucy's Garden" that deal with the domestic life of black women are less well known than those that deal with prominent euroamerican figures. All of these help me better appreciate our experience in the Moses Brown site. We're still on the top layer, and thus we often find bits of garbage and unremarkable material. But even barring this fact, there is an impulse inside me to dismiss what we are doing as unimportant, since it's "just a Providence house." These readings remind me, as have some of the previous ones, that it is these "normal" lives that often go unrecorded and thus, in a sense, the work done on them is very important. The readings have made me realize to a greater extent why we are collecting trash and the pitfalls of considering certain archaeological greatly more interesting than others.
+**** Response 6 <2019-10-07 Mon> 
+***** Urban historical archaeology -- Tadhg O’Keeffe and Rebecca Yamin
+- What have archaeologists brought to the study of Urban land.
+- Arch. changed concept of urban spaces thru material culture
+- City as theater  at macro level vs city as non-theater
+  - Theater => city as a place of spectacle
+- Arch. is always political
+  - Mall above African burial grounds
+  - Link to our presence at Moses Brown
+***** Contemporary archaeology and the city -- Laura McAtackney and Krysta Ryzewski
+- City as a place of destruction and disorder
+- What is contemporary archaeology?
+  - Focus on "late modern" societies: 1900s-2000s
+  - Pushing scope into the present
+    - Yet another way to question throwing away trash
+- How does it relate to cities?
+  - Has been a focus since the '60s
+- What are the challenges?
+  - Hard to get a cultural view of the city as a whole
+  - Scale of the city
+  - How central is industrialization? link to our dude
+    - Conflict as a central concept
+- What are the broad patterns of this work?
+  - Creativity -- always happening inside the city and also present in city's construction
+  - Ruination -- visible urban decay
+  - Political action
+- Complexity
+***** Archaeologies of Landscape: Contemporary Perspective -- Wendy Ashmore and A. Bernard Knapp
+- Landscape is a cultural construct of mod. Eu. thinking
+- Human/social nature of landscape
+- Types
+  - Clearly defined -- intentional
+  - Organically evolved -- social rel w landscape evolved
+  - Associative cultural -- rel rel w landscape
+- Landscape as social order
+***** Response
+I found the link between landscape and city implied by this week's selection of authors thought provoking. The central question from the Ashmore & Knapp lies around the definition of landscape, whereas the other two works explore the central themes and challenges of contemporary archaeology inside the city. This positioning made me question to what extent the archaeologists who wrote about cities would consider the study of urban spaces to be a study of landscapes.  Ashmore & Knapp's writing, however, would imply that if city archaeologists did consider themselves to be studying landscape it might mean little because the archaeological definition of landscape has been in hot dispute. The definitions that Ashmore & Knapp eventually enumerate; clearly defined, organically evolved, and associative cultural; make it clear that to the authors it is the interaction between people and their macro surroundings that is crucially important. Indeed, Ashmore & Knapp spent their opening remarks dispelling other classification systems of landscape that imply otherwise. Maybe, then, the city isn't a landscape as much as a broad parallel drawn between distinct landscapes. The writings of the authors who wrote about urban spaces could substantiate this idea. They agreed that the city imposed its own architectural challenges, one of which is finding underlying unifying principles and abstractions. This holds true of culture, for across a city there's a high degree of variability in its cultural fabric, and for structure, for the appearance and history of each part of the city is also distinct. Perhaps a city, with its dynamism and magnitude, needs to be further divided to make meaningful inferences. Perhaps the city is not a single landscape. Perhaps "the city" doesn't exist and there are only "cities."
+**** Response 8 <2019-10-20 Sun> 
+***** Arch in the field: Lucas (2001)
+- *processualism*: arch exp affects work
+- thinks we haven't put enough attention towards why we do the things in the way that we do them
+- all in relation to *the field*
+***** What is community archaeology? -- Marshall (2002)
+- set of practices, releasing partial control to community
+- short and easy subj matter
+***** What does it mean to 'give the past back to the people' -- Nick Shephard (2007)
+- It must be yours to give
+- Details
+  - SAHRA, South Af, buried bodies
+  - Prestwich Street
+  - Hands Off Committee
+- Underlying ideas
+  - Positivism
+    - researcher affects research
+- Bodies removed, Arch used as a cleansing mechanism
+- Role of sciences post apartheid
+  - science not sufficient
+- "Rival languages of concern"
+  - Exhumations for scientific value
+    - "issues of agency and ownership": our history vs their history
+  - "Life must go on"
+  - HOC: memory
+***** Community archaeology: general methods and standards of practice -- Gemma Tully (2007)
+- Info
+  - subdiscipline
+  - Origin
+    - 1970s and 80s
+    - critical theory
+      - germany 1930s
+      - relativise findings
+  - Quseir
+- Ideas
+  - give wider wider acceptance thru best practices
+  - we need to consider comm beyond lineage
+  - museology ~ comm archaeology, not neut acts, exhib affect ppl
+  - Case studies
+    - Which meet CAPQ standards
+      - Communication and collaboration
+      - Employment and training
+      - Public presentation
+      - Interviews and oral history
+      - Educational resources
+      - Photographic and video archive
+      - Community controlled merchandising
+    - only one met one from each category
+    - oral histories most important
+    - "best practices" already emerging naturally
+- Need more
+  - edu of all, not just young
+***** Response 
+
+ This week's focus on community archaeology made me engage with a sub-field I'd never heard of before. Perhaps I've seen similar concepts, mentioned earlier in this class or in passing, but I didn't know that it existed as a specific set of practices. This may be because it is relatively young--many of the writings were from the early 2000s. Additionally, most of the pieces mentioned that it was an emerging field: Lucas was focused on bringing more attention to engagement in the field, Tully was trying to establish a codified set of best practices, and Marshall's piece was literally called "What is Community Archaeology?" In retrospect, I can see the influence of these ideas might have had on our past readings. We seem to be at an interesting time in the development of archaeology in which there are different forces that are trying to pull the discipline in different directions. Academic tides in archaeology, like in many other disciplines, have waxed and waned in influence, going from processual archaeology to post-processual and positivist, to still different forms. When I first heard the term community archaeology I thought it was a tectonic shift back away from the more clinical, scientific ideals that permeate certain sub-disciplines of archaeology. There is indeed a certain amount of that, but it seems to stem more from the embrace of human identity in the process of archaeology than from inhibitions about incorporation of the scientific method. As Shepard's piece shows, a more analytical and scientific archaeology can provide less value in certain areas than communal engagement with the process, and can even be problematic, an instrument to avoid deeper change or introspection. I thus think that community archaeology and the sets of best practices that are outlined in this week's readings are a good idea. Even as archaeologists maintain the rigor of their operations, it seems like engagement with the various communities that might interact with those projects on different axes can only increase the value of the work being done, both in an academic sense and in a practical human one. It makes me wonder what communities are related with the Moses Brown site. The only one that comes readily to mind are the residents of Providence, but  it seems like an interesting area for further thought. It makes me want to explore how we could better find people who would be interested in the site and reach out to them to improve the value of our work.
+**** Response 9 <2019-10-28 Mon>
+
+***** Readings
+****** Pottery -- Orton Hughes 2013
+Structure
+- Foundational data
+- Integrated data
+- Interpretation
+
+Words
+- assemblages
+- site formation processes
+
+Interest:
+Interested in *interpretation*: It all relates to scientific method, and comparative. 
+- What about /our/ site, is it impossible to make deductions?
+- Are we particularly interested in 
+
+****** Deetz
+Theoretically not focused on hist figs, but public is and puts pressure towards that
+
+Pottery longevity thus emph
+
+England informed Am use of ceramics.
+Mostly foundational data in this section
+Milk + ceramics
+
+***** Response
+Hughes precisely lays out a model involving three key levels of evidence and, though it was centered around pottery, it made me think more broadly about how these levels relate to the work that we've been doing this semester. I was particularly interested in the level of interpretation because it was both the one that Hughes deems the most intellectually interesting, and also the one that seems hardest for us, on the Moses Brown site, to engage in. Though Hughes himself views the interpretation level as the broadest and hardest to define, all the qualifiers he gave put it in the realm of comparative. He emphasizes how we as archaeologists must, as far as I understood it, use the scientific method. We must hypothesize based on a sample and than validate with further exploration. Furthermore, it seemed like this validation was mostly happening through examining different locations. This raised several questions for me. How can we, only excavating one residence, engage in comparative analysis? Ideally it seems we'd have other trenches centered on related but different households. How can we form meaningful hypotheses about the work that we are doing? Is it enough to validate a hypothesis in another trench from the one where we first observed a phenomenon? Does the kind of analysis that Hughes being filtered through a separate field, is it not applicable to what we've been doing? Seems like the fact that Hughes is writing about pottery means that the lens is going to be broad. A focus like pottery lends itself to trends that cover an area, whereas it feels like we are trying to uncover the material life of a particular household. I think also that it is hard to articulate the interpretation step. While reading Deetz I noticed how much of it fell rather outside the interpretation step. Though it relied on interpretation, it is largely concerned with facts and trends that have already been analyzed. Deetz presents, for example, that ceramics in the American Colonies were largely influenced by milk consumption in England, which falls roughly into foundational evidence, whereas if it were presented as a question and analysis around this question, it would give us further insight into inference using interpretation level evidence. It made me value, at least in concept, case studies since they give this type of material. This is not to say that I had a negative experience of the Deetz; I found it much more readable than case studies. But Hughes made me think further about whether this comfort comes at the expense of a level of understanding about the process behind the material presented. Likewise Hughes made me think about our personal approach to the Sachs home and if this is a deliberate focus, or one that is shaped in large part by practical feasibility. 
+
+ Certain things about the Deetz reading I found particularly interesting I found it interesting that 
+which made me think both about the Deetz reading in a different light and about 
+**** Response 10 <2019-11-05 Tue> 
+***** Readings
+****** Deetz 5-9
+African American Past:
+- Democracy of material past
+- Two way cultural street
+  - suppressed by whites
+    - "Along the Eastern Seaboard" African Americans were not free to construct dwellings that might show clear connections to prior African forms"
+- Shotgun house
+****** Renfrew and Bahn 130-150
+- dating stuff
+  - carbon dating,things appropriate for different time periods
+- pre-scientific-stuff used chronologies and old calendars
+  - Mayan calendars 
+    - advanced, own numerical system etc.
+- tree-ring dating
+  - used to develop radio carbon dating
+- radio carbon dating
+  - don't submit for dating unless sure of context
+  - argon
+  - uranium-series
+***** Response
+I was particularly interested in the section of Deetz that dealt with African American Past in American material history. I found it to relate at least partially to my housing biography. I didn't find much overlap between it and the Renfrew and Bahn reading, though I'm sure the latter will be useful this week as we attempt to date and analyze our finds. Deetz talks about how Archaeology is perhaps the most democratic way to view and analyze the path. I questioned this slightly because of themes that Deetz himself mentioned earlier in the book. As we have been exploring from the first days of class, people of higher status will be over represented in the historical record, and I think this can also extend to the material record. This of course begs the question of what a more democratic medium for discovering the past would be, and I must agree that I can't think of one, but I would add the qualifier that as archaeologists we are particularly responsible for creating a more democratic material historical record by emphasizing those parts of the material record that would be easily overlooked. As we have seen through early archaeological work, it is all too easy to focus primarily on powerful figures of history and forget those around them. As I said earlier, this reminded me of the building I wrote a biography of earlier in the semester. The Stephen Hopkins house bore little record of the enslaved people that lived and worked in its rooms. Changing times have seen an increase in interest in these people: historians have emphasized any passages they could find about them in Hopkins' writings, in his will, and a room has been devoted to recreating their living conditions. However, even with this renewed interest, their material remains have largely been lost. Only two out of the five slaves' names are known, and only a significant amount of information about one of them is known because he was mentioned in Hopkins' will. Perhaps if the house had been demolished and buried like the Sacks home we would know more about these people, but it wasn't demolished, nor was it preserved--the possessions that these people left behind were lost as were their names. It makes me sad that, even through the more democra
+**** Response 11 <2019-11-11 Mon> 
+***** Notes
+****** Crony 1990
+- archaeological conservation
+- on site conservation
+  - have we done so on our site?
+    - link to nails in rain
+- lab conservation
+****** Dendrochronology
+- dendrochronology produced new information
+- we can't really replicate?
+****** Using metal detector survey
+- bringing relatively new ways of doing things and approaches into the field
+- small ephemeral historical sites
+- do we match that?
+- why bring up metal detectors to us?
+  - creative uses
+***** Response
+One thing that struck a chord with my experience in the field, or at least our relatively low stakes version of "the field" at the Moses Brown site, was the Cronyn discussion of on-site conservation and laboratory conservation. As Cronyn states, on-site conservation deals with material remains at their most vulnerable period. As the earth is scraped away, so too is the protection it gives. Nowhere was this more reminiscent of than our last day of digging in the pouring rain, in which our hitherto measured pace of excavation was drastically quickened, our finds rate increased proportionally, and the rain rendered both our iPads and our labeling devices near useless. Though we attempted to maintain archaeological practice, water got in the bags, and as we've been performing the lab conservation I've noticed particularly that the nails and other iron artifacts bagged that day have fared poorly. Luckily, at least if past years are anything to go by, the nails are far from our most precious items. Still, it gave me a first hand look at the challenges that come with rapid excavation under trying conditions, and also the potentially disastrous effects of improper excavation or storage conditions. Reading the examples of careful onsite conservation and innovative archaeological practices also satisfied questions I'd been having during Moses Brown excavation. For example, upon unearthing a particularly brittle and fragmented piece of plaster, I often wondered what we might do if this were in fact a priceless item that needed conservation. Now I've been exposed to some of the ways we might have approached this, such as excavating the volume around it and delegating the task of "micro excavation" to a specialist. The metal detector survey article fulfilled a similar line of questioning, as it showed that new approaches are emerging in the field. I wonder if we could have used this to further tack down where the borders of our house were, as I imagine that most of the nails would have fallen with the house walls and thus given us a feel for where the walls fell. This along with the dendochronology article also made me think more about the discussion we had last week in section about scientific rigor in archaeology. The kind of distributive thinking in the metal detector piece and the reliance on easily overlooked natural materials present in dendrochronology both seem like characteristically archaeological approaches toward information gathering. They remind me why archaeology is its own medium, separate from, say, geology, and with a knowledge base that, though superficially less technical, offers unique and appropriate ways for reasoning about time and usage patterns. 
+**** Response 12 <2019-11-15 Fri> 
+***** Readings
+****** Potato hill
+triggered by impending damage
+not clear to me the context and background that make this impotent 
+****** Clarke 2015 
+Legal vs ethical responsibilities:
+- public availability
+- privacy concerns or country specific legislation
+- putting companies in charge of this process
+****** Tuck et. al.
+Proggio Civitate revealed a moat and defensive structures that had been overlooked during previous restructuring
+Vescovado di Murlo -> moat , prev thought small not like this
+****** People's Data
+Favors data publication over data sharing or data archiving
+Varying approaches to use of archived data demonstrates the need for open dissemination of this data for corroboration of conclusions. 
+***** Response 
+This weeks were split into different groups: case studies and discussions of academic archival data practices. The first group I found interesting because of our impending task of crafting a similar report for the Moses Brown site. These primarily convinced me that context behind the archaeological dig is of great importance. I found, for example, the Potato Hill article difficult to focus on because it didn't do a lot of work in the introduction to establish the underlying context of the dig. The authors mentioned that the catalyst for the excavation was the impending re-landscaping of the area, but I would have liked more description of the area and details that might have piqued my interest about its significance. This is an important task across many archaeological disciplines. In proposing the excavation itself, there needs to be some meaning behind it, some "so what" that you can tell potential sponsors. In actually digging, there needs to be some guiding principle to inform the significance of finds, and the areas to put more emphasis on. And of course in actually analyzing your material you need a principle investigatory focus as well. In such a report I think this should come out, at least in the intro and conclusion. Of course, to remain scientific, dry details and specific steps must be included, but to maintain readability and conceptual integrity it helps greatly to have such an overarching message. The latter group I also found interesting. It involved the topic of reuse and sharing of academic data sets, which I had never considered deeply. The modern introduction of this data to digital mediums has 
+
+*** Seminars
+**** Introduction <2019-09-10 Tue>
+ - archaeology is the study of humanity through material remains 
+ - Historical arch has different records
+   - written records
+   - spoken
+ - We choose to preserve narrow selection
+   - literate => probably elite male white
+ - Deets is a bit old-school
+   - he wanted to make arch into hard science (mvmt called perceptualism)
+ - Material culture made of *artifacts* *ecofacts* *features*
+   - artifacts: man-made, portable
+     - trinkets
+     - naraganset can
+     - nails
+     - pottery
+   - ecofacts: nature effected by man, not man-made, man-used
+     - soils
+     - plant distributions
+     - seeds
+     - animal bones
+   - features: the surrounding structure
+     - terraced rice paddies
+     - wall
+ - *Context* includes natural and cultural formation processes
+   - actions that leave distinct traces
+   - natural: changes in archeological record not from humans
+   - cultural: ^^^ from humans
+     - construction
+     - looting
+ - Arch is destructive so we need to record _everything_
+ - Soil matrix infromed by *stratigraphy*
+   - stratigraphy: any layer lower will be older than the one above it
+   - we try to take off one layer (stratum?) at a time
+   - things can get complicated by diffrent layers that interrupt each other and have odd dating discrepencies
+ - We have some weird terminology
+   - stratigraphic unit = context = locus
+   - trench = unit != stratigraphic unit
+   - (but our readings don't abide by this)
+ - We're using a fun database
+   - structured in levels from biggest to smallest areas of concern
+   - moses brown site > unit you're working in > trowel (to start recording)
+   - unit is broad description
+   - loci are strati layers: click on pencil to load observations
+***** Intimate lives uncovered <2019-10-15 Tue> 
+- Can we discover intimate details of people's lives?
+- Most effective work done at the small scale?
+- Objects play active role in social lives
+  - e.g. phones
+    - but what can we infer from phones?
+    - infer from *apps* not so much phones
+***** Landscape <2019-09-10 Tue> 
+-What is a landscape ?
+- constructed
+- conceptualized
+- ideationa !
+- Our site?
+- site of pow : assylum , Brown Uni
+- site of memory : our influence as arch
+- site of instruction
+- How does urban arch rel to sacks house ?
+1 -we are making story of corban house in ck ofhistory
+- City as a theatre
+-big houses on the hillw / nice streets
+- Prov embrace of lovecraftian spooky culture
+- planned shape and districts
+-City as non - theatre
+- protest blocking off streets, going against st intended use
+-cities respond w /wide central plazas
+-implies cities as places of covert action
+- junkies,sex workers , graffiti
+-What covert action exists in arch record ?
+- tunnels, graffiti (bath new and anchiant)
+-What is contemporary arch ?
+- dependswho's writing , lots ofwwll , oldr the 50yrs?
+- ruin culture , contup old in collapse
+- detroit abandoned train station sym. rehabilitation
+**** Households <2019-10-01 Tue> 
+***** Painting
+- What would we _not_ find
+  - Children notoriously hard to find
+- Deductive house reasoning
+  - literate?
+  - gender norms?
+  - family structure?
+  - think about "household" vs "house"
+***** What is a household?
+- Not just place but experience of people inside it
+- What evidence can we use?
+  - docs
+  - consumer goods
+- Not just a house e.g. Lowell girls in Lowell MA
+***** What are some of the challenges of doing historical archaeology?
+- Pro: gives us access to written record
+- Con: gives us access to written record lol 
+***** Up-next: designing and implementing research questions
+- Research questions give structure to the situation
+- You can't do it over again (destructive) so need to get it right first time
+- Site stewardship: have a purpose
+- Take context into account
+- Novelty
+**** How to analyze materials <2019-10-02 Wed> 
+***** Ceramics
+Key characteristics
+ - Paste: characteristics of the clay itself
+
+Types of paste
+ - Coarse earthenware: something like terracotta or brick
+ - Stoneware: higher quality, something with a pale inner portion but not glass ware
+ - Refined earthenware: Europeans copying porcelain, white in color
+   - wanted it to be white but it turned out to be cream colored
+ - Porcelain: white to bluish white
+
+Decoration
+ - We are concerned with the maker's mark
+
+
+***** Nails
+ In our certain time frame there can be things that make it hard to know the exact period 
+ - Smashed wire nails 1890
+ - Square/cut nails 1850-1900
+ - 1860 60 degree thread proposed for screws
+
+
+***** Glass
+Glass can be quite useful for dating, though in our time period things started being standardized.
+
+Bottles are particularly useful
+ - Seams: the point at which premade section joined the other, now all made at once
+ - Owen's scar: premade section
+ - Finish: the lip of the bottle, historically added as a separate section
+ - Color: all sorts of tells, the finish they used can affect the color that it ended up being, e.g. a clear bottle will turn purple bc of amethyst or if from certain period but yellow bc of manganese
+
+***** Cans
+- Seam: soldered (machine or hand), overlap, lock side seam (pointy), double side seam
+- Closure: lid (1810), lid + vent hole (1840)
+- Opening: how a can is opened, "church key" opening
+- Type: specific cans from different period
+
+***** Bones
+
+**** Family <2019-10-02 Wed> 
+Albert dies of pneumonia wife died of broken hip
+**** Absolute dating vs relative dating <2019-11-05 Tue> 
+- terminus post quem: date after which
+- tree rings
+  - dating when tree was cut down
+  - mostly for arid, underwater, or frozen climates where wood is preserved
+  - calibrate carbon dates
+- Deetz's gravestones
+  - popularity of different gravestones
+- seriation 
+  - relative frequencies
+- typology
+  - e.g. certain bottles made at certain times
+  - e.g. nails
+- objectivity
+  - radio carbon dates operate on large time scales
+- processionalist
+  - make hard science
+  - broad claims
+  - Deetz
+    - am col hist started english loving
+    - went and did own thing
+    - went back british
+  - good starting point
+- see things as more than what they are
+  - can use to make statistical arguments
+**** Conservation <2019-11-12 Tue> 
+- Provenance studies
+- Residue analysis
+  - restore old beers
+- Ancient DNA
+- Ceramic
+  - paste composition
+  - manufacture
+  - paints, slips, glazes
+  - trapped charge dating (rare)
+  - fingerprint analysis
+- Stone
+  - Sourcing
+    - xrf
+    - uv emission
+  - Dating
+    - obsidian hydration
+  - Manufacture
+    - lithic analysis
+- Bones/teeth
+  - isotopes -> origin
+  - diet
+- Soil
+  - composition
+  - pollen
+- 
+*** Building biography
+**** Other
+***** Buddy Cianci House
+http://providenceonline.com/stories/buddys-palace-on-power-street,26704
+By Ben Berke
+
+For a short while, a reader of means can call Residential Properties and live out a first-rate Providence fantasy: renting the former home of Buddy Cianci. A low-slung, neocolonial structure with a decorative central turret, Buddy’s house at 33 Power Street slightly resembles a first-generation Howard Johnson’s. A retaining wall keeps the property flush with Benefit Street, affording a picture-perfect view of the city while Power careens downhill.
+
+It was during divorce proceedings in 1982 when Mayor Buddy Cianci moved in – renting, in fact, from future governor Bruce Sundlun. Buddy’s wife was asking for $500,000, and in the sunken living room, complete with full bar, Buddy tortured her alleged lover with a fireplace log and lit cigarette in an attempt to extort the entirety of the settlement.
+
+The assault cost Buddy his mayorship, but he soon bought the house from Sundlun and it was once again palace to the Prince of Providence. Or at least a section of it was – during a second run of victorious mayoral elections in the 1990s, Buddy subdivided 33 Power Street to avoid foreclosure. He kept the (currently available) unit with the cavernous living room, into which he was known to give speeches from the second-floor balcony.
+
+It was from the foyer of this unit that Buddy opened the door to FBI agent Dennis Aiken in 1999. Buddy sold the home soon after, ostensibly to fund his legal battle against the 27 charges arising from Operation Plunder Dome, which Aiken had knocked on his door to discuss before raiding City Hall. By December 2002, Buddy was serving a five-year prison sentence for racketeering conspiracy.
+
+In retrospect, Buddy could hardly have found a home with more appropriate symbolism. Residing halfway up College Hill, the city’s first Italo-American mayor never truly summited that well-preserved bastion of Yankee power. And of all houses to be perched halfway up College Hill, this one was a former horse stable, McMansionized to express an outdated concept of power: gold chandeliers, dark wood panelling, a recurrent haze of cigar smoke.
+
+Buddy’s gone, but 33 Power Street could still be yours: four bedrooms, six bathrooms, for $7,500 a month.
+***** The Music Mansion
+http://www.musicmansion.org/about.html
+**** Stephen Hopkins House
+***** Prompt
+1. Where is it located? Who built it originally, when, and for what purpose?
+2. What materials was it built from?
+3. How has it physically changed over time?
+4. Talk about its surroundings/neighborhood and how this context has changed through time. How has it been used in the past?
+5. How is it used today?
+6. What does it mean to the people who use it or walk by it, etc.? Etc.
+
+***** Notes
+****** Tour
+- River farms: equal frontage, John Field plot see picture
+- Bought when 35 from situate with family teenage boys and daughter, shipping business
+- Self taught lawyer
+- First: chief justace, 2nd oldest signer of the decl of ind
+- Saved from being killed by courthouse
+- 1782 added fireplaces
+- 7-8 enslaved people
+- Colonial dames of RI: daughters of American Revolution
+- One of 2 houses in RI to still have shell motif fireplace
+- 180 degree rotation when moved final time
+- Books on contemporary science and practical knowledge
+- Tiles are didactic: tell bible stories, he was a Quaker and influenced by baptists
+- He had parkinsons
+- Had many instances of "poor man's chipendale" chipendale but not as nice as other stuff in house
+- Hopkins added 4 rooms: children's room, best bedroom, best parlor, study
+- Acquired house in 1742
+- Became boarding house for unmarried men, and tailor shop
+- Baptists and Quakers wanted him to give up slaves, he dragged his feet, they distance themselves from him. (Slaves) Fiba + child, St. Jago, 11yr Prince
+- Few documents of St Jago, given freedom by Rufus Hopkins
+- Window becomes front door of first picture
+- Next photo is back of same photo
+- 1742 acquired, by 1839 turns into boarding hous taylor shop,  died in 1885
+- Tourguide: Chris Reynolds--worked in mental  health for children, retired, "The fact that I can be around 300 year old chairs is a thrill to me"
+- Pic in rel. to courthouse
+****** Pictures
+******* IMG_0316
+[[file:../../Documents/Stephen Hopkins/IMG_0316.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0316.MOV]]
+Bought in John Field, farm plots. 
+Book: Plantations for Two Hundred and Fifty Years, 1886
+******* IMG_0318
+[[file:../../Documents/Stephen Hopkins/IMG_0318.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0318.MOV]]
+The curators of the space put up a portrait of person with Kinky hair to honor presence of slaves in space
+******* IMG_0320.MOV
+[[file:../../Documents/Stephen Hopkins/IMG_0320.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0320.MOV]]
+The curators are interested in religious contradictions. Have many odds and ends. Also many century pieces. But most interested in the gleaming buckles, uncharacteristic for a Quaker. 
+******* IMG_0321.MOV
+[[file:../../Documents/Stephen Hopkins/IMG_0321.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0321.MOV]]
+Many of the items aren't actually related to the man  himself. John Brown as a *place of historical interest*. E.g. these belt buckles didn't all come from him. 
+******* IMG_0322.MOV
+[[file:../../Documents/Stephen Hopkins/IMG_0324.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0324.MOV]]
+The chair has clawed feet which the guide thought had greatly to do with the grasping of power and created tension with the spherical bottoms.
+******* IMG_0325.MOV
+[[file:../../Documents/Stephen Hopkins/IMG_0325.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0325.MOV]]
+Study comprised of original books 
+******* IMG0327.MOV
+[[file:../../Documents/Stephen Hopkins/IMG_0327.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0327.MOV]]
+Handwritten notes and proofs of purchase were particularly emphasized. It is a place restored as much as possible to its former state. 
+******* IMG0329
+[[file:../../Documents/Stephen Hopkins/IMG_0329.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0329.MOV]]
+THE CHAIR the dude was so  excited  about this chair. For him it represented tons of things about the man and the house. 
+******* IMG0330
+[[file:../../Documents/Stephen Hopkins/IMG_0330.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0330.MOV]]
+Quaker tiles. These tiles really captured the conflict  in that house between the quaker roots and the desires for other, more worldly situations. They have beauty but only with religious justification. Link to decorative arm pins.
+******* IMG_0348
+[[file:../../Documents/Stephen Hopkins/IMG_0348.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0348.MOV]]
+A window was destroyed to make this door
+******* IMG_0349
+[[file:../../Documents/Stephen Hopkins/IMG_0349.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0349.MOV]]
+Please ring bell good & loud Thanks
+******* IMG_0351.MOV
+[[file:../../Documents/Stephen Hopkins/IMG_0351.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0351.MOV]]
+- Moved twice
+  - South Main St.
+  - Moved to foot of Bank Lane (orig. Hopkins St.)
+  - Moved to land Hopkins had bought from William Field
+- Extended
+  - Built two story house in addition
+  - Made nice staircase
+  - Sided  in regionally common way
+  - Painted same dark red as is used now, entrance grey blue
+- Has been called Providence's most distinguished citizen
+******* IMG_0352-55.MOV
+[[file:../../Documents/Stephen Hopkins/IMG_0352.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0352.MOV]]
+Year: December 1968
+Form: 10-300
+Title: National Registry of Historic Places Inventory -- Nomination Form
+Prepared by: Richard B. Harrington
+Org: Rhode Island State Historical Preservation Commision
+Date: Nov. 8, 1969?
+
+[[file:../../Documents/Stephen Hopkins/IMG_0353.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0353.MOV]]
+- Acquired by Hopkins in 1742-43
+- 1804 moved up the incline
+- 1927 moved another short distance
+- *mobility of position vs stability of appearance* but not really bc the stability is a relative illusion. Now it's a place of
+- In its last move the house was rotated partially.
+  - New main entrance cut.
+- The rooms added were in a single layer, tall and shallow horizontally. 
+- Remarkable interior resilience
+- Over the past forty years has been owned by the Society of the COlonial Dames in the state of RI
+
+(Continuation of previous)
+[[file:../../Documents/Stephen Hopkins/IMG_0354.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0354.MOV]]
+- Most notable for Stephen Hopkins himeself
+- House modest but important bc intact repr of arch hist
+  - 18th Cent house-wright
+- "comfortable but unpretentious early domestic accomodation"
+- Interested in the shell over fireplace in particular
+
+(Cont)
+[[file:../../Documents/Stephen Hopkins/IMG_0355.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0355.MOV]]
+- Interior good repr of time but w/ some pers effects, many not
+- "Cultured but not rich persons"
+- *Garden area* past meets present, planned out by a descendant
+  - Planted w/ accurate depiction of garden  needs at time
+- George Washington
+******* IMG_0358
+Images from 1961
+Was this after the move? It must have been. Example  of how it looked after the final move back in the day.
+[[file:../../Documents/Stephen Hopkins/IMG_0358.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0358.MOV]]
+******* IMG_0359
+[[file:../../Documents/Stephen Hopkins/IMG_0359.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0359.MOV]]
+The house number might have changed? Stored as #9 Hopkins St.
+A drawing, unclear when but looks like it was after the final move
+******* IMG_0365-67
+The Dames
+- p. 3 Called it "Washington Room" *Allure of Washington essence*, much like the trace of Hopkins left after his death
+- "RHode Island's most illustrious citizen"
+******* IMG_0370
+[[file:../../Documents/Stephen Hopkins/IMG_0370.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0370.MOV]]
+Back of image: 
+Year: May 3, 1925
+Source: Providence Journal
+[[file:../../Documents/Stephen Hopkins/IMG_0372.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0372.MOV]]
+Good image to look at the structure of the house. The taller and narrower front with the new door. Still appears to be on top.
+******* IMG_0375
+[[file:../../Documents/Stephen Hopkins/IMG_0375.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0375.MOV]]
+Beautiful sunlit photo of front
+Year: 1960
+P.F. Providence Dwellings
+[[file:../../Documents/Stephen Hopkins/IMG_0376.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0376.MOV]]
+******* IMG_0377
+[[file:../../Documents/Stephen Hopkins/IMG_0377.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0377.MOV]]
+"Original home of Providence National Bank"? Not sure if this has to do with Hopkins home, doesn't look like Hopkins home, maybe on the same street and in relative position
+******* IMG_0379
+Year: 1902 
+[[file:../../Documents/Stephen Hopkins/IMG_0379.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0379.MOV]]
+House when it stood halfway up the hill
+[[file:../../Documents/Stephen Hopkins/IMG_0380.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0380.MOV]]
+Looks much different, door in a different place, on lower level. 
+******* IMG_0381
+[[file:../../Documents/Stephen Hopkins/IMG_0381.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0381.MOV]]
+Signs:
+House as tailor shop
+ATKINS
+cleaners, pressing
+adfasdf & adsfsadf
+TAILOR
+
+WE DO
+adsfasdf
+
+Also old car in the image
+******* IMG_0382
+[[file:../../Documents/Stephen Hopkins/IMG_0382.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0382.MOV]]
+Also halfway down the hill, so  before second move 
+******* IMG_0383
+[[file:../../Documents/Stephen Hopkins/IMG_0383.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0383.MOV]]
+Halfway up hill yet again
+******* IMG_0384
+[[file:../../Documents/Stephen Hopkins/IMG_0384.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0384.MOV]]
+Also halfway up hill
+Year: 1899
+BUT this one looks like a it's on the other side of the street?
+******* IMG_0389
+"Present Site in 1804"
+Second time the House has been moved
+******* IMG_0390
+[[file:../../Documents/Stephen Hopkins/IMG_0390.MOV][file:~/Dropbox/Documents/Stephen Hopkins/IMG_0390.MOV]]
+9th line beginning "Lived In This House" has date of 1743 instead of 1742
+1927 third time the House has been moved.
+***** Outline
+1. INTRODUCTION
+   1. Thesis
+   2. Narrative of house exploration
+   3. Basic description: materials, location on a hill (#2 #1)
+2. EARLY HISTORY
+   1. Plot of land, original location
+   2. Early history
+      1. lot of land, purchase by Hopkins, original purpose (#1)
+         1. Even the thing that it's being preserved for isn't its central purpose
+   3. Move no. 1
+   4. THEME: Repurposed
+      1. Repurposed from simple house to gov hs, to tailor shp, to museum
+      2. Physically changed, addition added, door cut thru window (#3)
+   5. THEME: Brink of destruction
+   6. Hopkins essence
+      1. Hopkins esteem allowed the house to be preserved
+      2. Otherwise very unremarkable home
+      3. Hopkins allowed it to gain significance through time, becoming example of relatively "normal" living situation
+3. SECOND MOVE (#3 #4)
+   1. THEME: Brink of destruction 
+      1. Move no. 2 bc of new plant
+   2. THEME: Repurposed
+      1. Adapting to new role as place of preservation
+   3. THEME: Repurposed
+      1. Slaves' significance has changed and become interesting
+      2. Addition of garden, addition of contents which aren't actually related, it has grown out of its original role 
+4. CURRENT USE
+   1. Current use (#5) as place of preservation, enthusiastic
+   2. History of stewardship
+      1. describe people who have stewarded
+   3. Preserved detailing
+      1. describe key objects: chair, other chair, preserved paint, plates, books, fireplace, decanter
+5. CONCLUSION: THE HOUSE AS THE MAN (#5 #6)
+   1. Most important part is Hopkins
+      1. argue chair as man is microcosm of house as man
+      2. house used as an exploration of him: Quaker tiles, mirrors, declaration of ind
+   2. House preserved because of the man, because of George Washington
+      1. The man allows the house to survive, his essence is what has allows the house to survive
+   3. His essence allows a place of historical enthusiasm and celebration
+      1. They allow all these items that aren't directly related to him a place to be venerated and seen
+      2. They allow people who would have otherwise been forgotten to be researched
+      3. They give history enthousiasts a place to practice their craft
+
+***** Written portions
+****** Introduction 
+The Stephen Hopkins House looks neither large or grand from the outside. Indeed, you might miss its squat red form as you walk down Benefit St. You might miss it, that is, if it weren't for the volunteers that wait out on the street on Wednesday mornings, asking passersby whether they want a tour. These volunteers, like the house, look rather ordinary save for certain details, in their case the green lanyards around the neck, the house's case the plaques and signage on its grey front door (Fig. 1). However, if you follow the volunteers into the building you will be greeted with a large collection or historic and extraordinary items and stories. The volunteers will tell that the Stephen Hopkins House, at least in their estimation, is far from ordinary. 
+
+The house is a rust red color (Fig. 1) and is located at the top of a steep incline (Fig. 2) next to the County Courthouse. Indeed, as we will soon learn, the this position has more to it than meets the eye, much like the Stephen Hopkins House itself. Its door is a darker blue-grey (Fig. 3), and both the door and the siding are wooden. The door faces out towards the street from a small elevated porch (though it didn't always do so). Surrounding the house is a small stone wall enclave that houses a garden of white flowers and small, scrubby herb plants. Down the hill can be seen the Providence Canal, besides which the house once rested. 
+
+****** Early history
+
+The house had a modest beginning, built on a plot of land owned by John Field (Fig. 4). This was in 1707 (PPS), early enough in Providence history that Providence's land was being sold in large equal frontage plots (Fig. 4). The original structure built by John Field consisted of two rooms on the ground floor and an unfinished attic (NSCDA). Hopkins made several key changes to the structure and position of the house. He changed its location, dragging it to the side of the Providence Canal which in its original positioning gave him a view of the ships and water from his window (Reynolds). He built an addition to the side of the house left of the door which was (relatively) tall and shallow, with two floors each split into to rooms (Reynolds). Thus he added a total of four rooms to the house. Whereas before there was a sleeping room and a living room, the added space was used for a variety of new and less pedestrian purposes. He added a better parlor, a better bedroom (the prefix "better" meaning that it was used for esteemed company as opposed to close family and friends), a study, and a room to house slaves. Each of these additions can be seen as a transition from a modest space to cultured space: the better parlor and better bedroom to house important guests, the study to produce and store knowledge in the form of books and writings, and the final room to house enslaved people, who at the time Hopkins built the room would have been considered symbols of Hopkins' status. 
+
+This follows a pattern that we will see again with the space being repurposed and physically changed to fit a new set of circumstances. It also introduces a common dynamic of the house in which, had it not been for the key historic figure of Hopkins, details of the house may not have survived. His eventual fame preserved parts of the house that would otherwise have been demolished, much as the modest original dwelling was allowed to survive through its alteration into a more social and aristocratic space. We could characterize what happened to the original dwelling as being subsumed both historically and physically into Hopkins' world, but simultaneously the existence of the original structure preserves an image of modest Providence life at the turn of the eighteenth century. Indeed, it is the oldest preserved dwelling in Providence (Reynolds), implying that many other such homes that didn't have a prominent figure to justify their preservation were destroyed. 
+
+****** Second move
+In keeping with a theme of mobility, several years after Hopkins' death in 1780 the house was almost destroyed to make way for a new road, but instead in 1804 was moved half way up what is now Hopkins St. to rest on the hill (NSCDA). As can be seen on the sign in Fig. 5, it became a tailor shop. It also became a boarding house for unmarried young men (Reynolds). Thus we see another shift in the use of the structure of the house, this time from a private space to a public space and a place of commerce.
+
+It maintained these facets the next time it was repurposed, and yet again it was salvaged and physically moved away from what could have been its destruction. This time the danger was caused by the County Courthouse, which had a planned location directly on top of the Hopkins House. At this point appreciation for Hopkins had grown: he was the Governor of Providence for 10 years, the second oldest signer of the Declaration of Independence, and the first chancellor of Brown University (NSCDA). As appreciation for his achievements matured, so did the perceived importance of the house (aided by the fact that Washington had visited and slept there once) (Reynolds). Thus, instead of spelling destruction, the County Courthouse plans heralded another change in the house's purpose and position. In 1927 the house was moved for the final time to top of the hill that is now Hopkins St (DameLeaf). It was also rotated 180 degrees and a door was cut through one of its windows by a skillful carpenter (PPS). It was brought under the protection of the Society of the Colonial Dames of RI who keep it open as a museum and public space.
+
+****** Conclusion
+
+The Stephen Hopkins House is now a public space for appreciation of early American colonial history, centered around but not limited to Stephen Hopkins. It is filled both with items that belonged to Hopkins like his books (Fig. 6), and his chair (Fig. 7), original parts of the house like the religious tiling around the fireplace (Fig. 8), and items that are simply from early Providence history like belt buckles and lanterns (Fig. 9). Additionally, there has been more interest in the enslaved people that Hopkins owned, who are honored by items like a portrait (Fig. 10), and with the scanty sections of documentation mentioning them put up on the wall. Now it has become a place of enthusiasm. As my guide, Chris Reynolds said, "I've been interested in early American furniture since I was 10... The fact that I get to be around 300 year chairs is a huge thrill to me" (Reynolds). The things that made the house unremarkable at the time it was built make it interesting today. It is not a mansion nor particularly extraordinary in form, which makes it all the more remarkable to its audience because it carries an air of authenticity. Though it now seems static, as we have seen it is has had a dynamic history in which it missed destruction narrowly and mostly because of Hopkins. Had Hopkins decided to settle one plot of land over, or to build his own house, had he been of less fame, had the city officials been less sympathetic to his memory, had Washington not stayed the night, the house might have been demolished. Instead survived through drastic alteration: it was constantly moved and repurposed, fulfilling many roles, at first a simple farm house, then a place of political discourse, then as a tailor shop, and finally as a housing for objects of its time and people who care about them. Preserved by Hopkins' essence, it is no longer his dwelling, but a dwelling for memories of his period, for enthusiastic historians, and for a public imagination of Early providence. 
+
+****** Bibliography
+ 
+Providence Preservation Society, "National Registry of Historic Places Inventory -- Nomination Form", /The Providence Preservation Society Gowdey Collection/. Prepared by Richard B. Harrington, Rhode Island Historical Association, 1968.
+
+Rhode Island Historical Association, /Providence Dwellings Photo Collection: Stephen Hopkins House, Hopkins St/.  
+
+Reynolds, Chris. Personal interview. 16 October 2019.
+
+National Society of the Colonial Dames of America in the State of Rhode Island and Providence Plantations. "Stephen Hopkins House," /The Providence Preservation Society Gowdey Collection/.
+
+****** Appendix
+Fig. 1 
+#+ATTR_LATEX: :width 10cm :options angle=270
+[[file:../../Documents/Stephen Hopkine JPG/IMG_0349.JPG]]
+
+Fig. 2 (PPS)
+#+ATTR_LATEX: :width 10cm :options angle=270
+[[file:../../Documents/Stephen Hopkine JPG/IMG_0359.JPG]]
+
+
+Fig. 3
+#+ATTR_LATEX: :width 5cm :options angle=270
+[[file:../../Documents/Stephen Hopkine JPG/IMG_0348.JPG]]
+
+Fig. 4 (PPS)
+#+ATTR_LATEX: :width 5cm :options angle=270
+[[file:../../Documents/Stephen Hopkine JPG/IMG_0316.JPG]]
+
+Fig. 5 (RIHS)
+#+ATTR_LATEX: :width 5cm :options angle=270
+[[file:../../Documents/Stephen Hopkine JPG/IMG_0381.JPG]]
+
+Fig. 6
+#+ATTR_LATEX: :width 5cm 
+[[file:../../Documents/Stephen Hopkine JPG/IMG_0325.JPG]]
+
+Fig. 7
+#+ATTR_LATEX: :width 5cm :options angle=270
+[[file:../../Documents/Stephen Hopkine JPG/IMG_0329.JPG]]
+
+Fig. 8
+#+ATTR_LATEX: :width 5cm
+[[file:../../Documents/Stephen Hopkine JPG/IMG_0330.JPG]]
+
+Fig. 9
+#+ATTR_LATEX: :width 5cm 
+[[file:../../Documents/Stephen Hopkine JPG/IMG_0321.JPG]]
+
+Fig. 10
+#+ATTR_LATEX: :width 5cm :options angle=270
+[[file:../../Documents/Stephen Hopkine JPG/IMG_0318.JPG]]
+
+
+***** Brainstorm
+  it bears his name, most of the items in the house didn't actually belong to Stephen Hopkins. Rather it is a place where items and goods that come from the period in which he was living in the house can gather and be put on display. For example, in the cupboards can be found a selection of plates, some of which belonged to Hopkins' brother while others are simply of similar make and appearance. Placed through the house are items chosen to preserve the aesthetic of a Quaker home from a well-to-do but not rich family in the late 16th century. They are chosen to capture a feeling, and inspire a sense of historical wonder and belief in a place totally different from the modern era. 
+This means that the house is a space of enthusiasm. The people who volunteer are largely retirees with a passion for early Providence history (Conversation). You can see the reverence with which they treat each item. As my tour guide, Chris Reynolds said, "I've been interested in early American furniture since I was 10... The fact that I get to be around 300 year chairs is a huge thrill to me." (Conversation) As we moved through the house, his reverence became infectious--he would point to each item in turn
+
+The volunteers surrounding the Stephen Hopkins House and the items found within it are part of a preservative process that goes back more than a century. Even before the Colonial Dames of America took over its preservation the house, due to the prominance of Hopkins, was recognized as a place worthy of preservation.
+The idea of *change* vs *stability* keep coming up. 
+Change:
+The house was moved not once but twice! The movement was from down by the river. 
+Signs of this change  are present in the building. For example, the Study which now has a view of the a very enclosed garden courtyard would have had a view of the shipyard that makes more sense. 
+Stability:
+On the other hand there are things that are very stable about the house. It is one of the only houses that has remained with original historical materials. It is one of the only houses that has a the same shell motif, one of only two left. It also has a bunch of people who are supremely concerned with preservation. It is a space of preservation. 
+*place of preservation*
+At the same time, however, it is not a place of true preservation because the people doing the preservation are introducing new facets
+- Emphasis of different things like the slaves and the emancipation of the slave
+- George Washington and his presence
+George Washington is the honey that gets people in the door, but it's not really what the house is about
+
+Idea of *past meeting present*
+The garden is a prime example: someone related to this through the bonds of familial connection, plays a part in making the space. But they are modern day, they are not part of thisi old space. It's about a modern day imagining of what that past was. A modern day yearning to recreate that time and place. It's a place of modern day love of the non-modern day. Kinda like the tourguide's presence their, there's nothing I love more than talking about really old chairs. It's an enthusiast's paradise. 
+And sometime the pats *clashes* with the present, which is what caused the house to be moved multiple times. We want to preserve things, but we can't accept the possible costs of that, like not building the state house. Thus we make the middle ground of changing these historic things, but keeping them as attractions. Of course it all becomes part of the story.
+
+Idea of *allure of essence*: 
+As some of the providence historical association papers said, the house is most notable for the man. The man of Stephen Hopkins permiates the house and it is hard to see the house as a simple structure. It's all about essence. The most striking excample isn't actually Stephen but George Washington. He only *slept* there but because  of  his fame, his sleeping in the best bedroom became on of the moste famous things about the house. You go in and look around at the room and marvel, Washington  was in this very room. At the time that would have been a big deal, but it wouldn't have been nearly as big a deal as it is today, simply because Washington has balooned  in his historical figure. Hopkins has nodoubt also gotten big, but Washington is now a household name, a legend. And thus we marvel at it. It's interesting how these figures interact with the actual house and structures and objects they come into contact with. The objects are quite ordinary objects. But they are kinda overtaken by the essences that are imbued into them. They mean much more than an object. Indeed, this is what makes archaeology an interesting field for us. We don's care half so much about the objects we uncover as about the humans behind those objects. But the great man theory of history can get in the way. But to a lesser extent we are still concerned with that. We are concerned with human connection to objects, who are we to say the worth of any of it. 
+*** Final project
+**** Brainstorm
+The most fun is if I could relate the project to programming in some way, obviously. What Same did was using GIS software, already done but perhaps still fruitful. 
+
+Archaeology software:
+- GIS
+- database management
+- information storing about the field
+- visualization software
+  - different types of table
+  - diagrams
+  - the actual site and maps (GIS?)
+- simulation
+  - seeing a building through time
+  - seeing site through time
+  - map of MB evolving through time
+  - a stroll down Benefit street incorporating knowledge from the RI historical association
+    - could use GoogleMaps api with street view service and overlays on the houses
+  - visualize the density of historic houses on different streets
+
+** Shopped
+*** Perception <2019-09-04 Wed>
+- Naive realism: reality generally matches appearance 
+  - Window shade: glimpse the real world 
+  - The beauty is out there waiting 
+- Theoretical physics: the world is actually crazy in ways we can’t understand
+- Color irrealism: things are objectively colorless
+  - there are small genetic variations in color perceptions perception
+- Atomic theory: composed of colorless things so has no color
+  - maybe color is an emergent property
+- Structural mismatch: there are no good candidates for physical color-proxies 
+- Outcomes 
+  - doubt knowledge 
+  - mind body problem???
+
+** Graduating
+- Since I'm not taking design and analysis of algorithms, I'll need to choose a different random course
+- I need to get my credits transferred
+- And then I'll need to confirm that I can use a course as my capstone and as one of my core courses
+  
+* Spring 2019
+** Shopping
+*** Webapps (capstone)
+- Security 1660 or OS
+- Data Science 1951a tedious, annoying, less so than 32
+- Distributed cs1380
+- CLIPS1850 cs2952-I Language processing in humans and machine
+- 

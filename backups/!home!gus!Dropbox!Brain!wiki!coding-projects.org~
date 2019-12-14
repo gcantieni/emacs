@@ -1,0 +1,16 @@
+#+TITLE: Projects
+
+* SOMEDAY Write game engine
+* Bindarrr
+Here's the script to turn a google doc into markdown. However, I'll have to figure out a way to make this script not treat a single newline exactly like no newline.
+https://github.com/mangini/gdocs2md
+Also there's this addon that might be smoother:
+https://github.com/evbacher/gd2md-html/wiki
+At the moment I want to convert the entire thing to basically a static site. But the simple narrowing was a very nice utility, maybe I can rebuild it without React? I just need a little bit of JavaScript. 
+
+Current plan: split all the h1's into individual files. Have narrowing only on main page. Learn about routing yay!
+
+
+** Hosing
+Try this one:
+https://www.netlify.com/
