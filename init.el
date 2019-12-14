@@ -4,25 +4,27 @@
 (package-initialize)
 
 ;; Defaults 
+(setq large-file-warning-threshold 100000000
+      backup-directory-alist '(("." . "~/.emacs.d/backups"))
+      recentf-max-saved-items 5000
+      ring-bell-function 'ignore)
+(defalias 'yes-or-no-p #'y-or-n-p)
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (delete-selection-mode 1)
 (set-face-attribute 'default nil :height 120)
-(setq large-file-warning-threshold 100000000)
-(setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
-(setq recentf-max-saved-items 5000)
 (show-paren-mode)
-(defalias 'yes-or-no-p #'y-or-n-p)
+
+;; Theme
 (defvar gus-dark-theme nil "Determines whether to use dark theme")
-(setq ring-bell-function 'ignore)
 (if gus-dark-theme
     (load-theme 'nimbus t)
   (load-theme 'adwaita t))
+
 (use-package folding)
 
-
-;; "General" keybindings
+;; General
 (use-package general)
 (general-override-mode)
 
@@ -30,48 +32,6 @@
   :states 'motion
   :keymaps 'override
   :prefix "SPC")
-
-
-(defhydra hydra-zoom ()
-  "zoom"
-  ("=" text-scale-increase "in")
-  ("-" text-scale-decrease "out"))
-
-;TODO
-;(defhydra hydra-resize ()
-;  "resize"
-;  ("]" 
-
-(general-def 'motion
-  "C-o" nil)
-
-(general-def 'override
-  "C-s" 'save-buffer
-  "C-<tab>" 'ivy-switch-buffer
-  "C-o" 'other-window
-  "C-S-x" 'package-install
-  "C-q" 'save-buffers-kill-terminal)
-
-;(general-def 'overriding-terminal-local-map
-;  "," 'isearch-exit)
-
-(gus-spc
-  "1" 'delete-other-windows
-  "0" 'delete-window
-  "e" (defhydra hydra-eval ()
-	"eval"
-	("b" eval-buffer :color blue)
-	("s" eval-last-sexp :color blue))
-  "r" 'revert-buffer
-  "x" 'execute-extended-command
-  "p" 'package-install
-  "f" 'counsel-find-file
-  "k" 'kill-buffer
-  "TAB" 'counsel-switch-buffer
-  "\\" 'split-window-right
-  "i" 'imenu
-  "=" 'hydra-zoom/body
-  "`" 'term)   
 
 ;; Scrolling
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
@@ -96,13 +56,58 @@
 ;; Evil
 (use-package evil
   :init
+  (setq evil-want-C-d-scroll t)
+  
   (evil-mode 1)
   :config
+  (delete 'term-mode evil-insert-state-modes)
+  (add-to-list 'evil-emacs-state-modes 'term-mode)
   :general
   ('normal "TAB" 'indent-for-tab-command
 	   "a" 'evil-append-line
 	   "A" 'evil-append)
-  ('motion "," nil) )
+  ('motion "," nil))
+
+;; Keybindings
+
+(defhydra hydra-zoom ()
+  "zoom"
+  ("=" text-scale-increase "in")
+  ("-" text-scale-decrease "out"))
+
+(general-def 'motion
+  "C-o" nil)
+
+(general-def 'override
+  "C-s" 'save-buffer
+  "C-<tab>" 'ivy-switch-buffer
+  "C-o" 'other-window
+  "C-S-x" 'package-install
+  "C-u" 'scroll-down-command
+  "C-q" 'save-buffers-kill-terminal)
+
+; Note: Term mode use C-c C-j to switch to line mode
+
+;(general-def 'overriding-terminal-local-map
+;  "," 'isearch-exit)
+
+(gus-spc
+  "1" 'delete-other-windows
+  "0" 'delete-window
+  "e" (defhydra hydra-eval ()
+	"eval"
+	("b" eval-buffer :color blue)
+	("s" eval-last-sexp :color blue))
+  "r" 'revert-buffer
+  "x" 'execute-extended-command
+  "p" 'package-install
+  "f" 'counsel-find-file
+  "k" 'kill-buffer
+  "TAB" 'counsel-switch-buffer
+  "\\" 'split-window-right
+  "i" 'imenu
+  "=" 'hydra-zoom/body
+  "`" 'term)   
 
 (use-package evil-escape
   :diminish t
